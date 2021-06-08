@@ -2,6 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 
 class WebScraper:
+    """
+    WebScraper:
+    """
 
     def __init__(self, url,
                  headline_tag='h1',
@@ -31,7 +34,10 @@ class WebScraper:
             full_url = self.url + f"/page/{page_num}"
             yield full_url
 
-    def soupify_webpage(self, url): # pragma: no cover
+    @staticmethod
+    def soupify_webpage(url): # pragma: no cover
+        """
+        """
         response = requests.get(url)
         if response.status_code != 200:
             raise Exception #TODO: more specific exception
@@ -41,37 +47,44 @@ class WebScraper:
         """
         Generator that yields the soup of each high-level page.
         """
-        for url in self.generate_page_url():
-            yield self.soupify_webpage(url)
 
-    def get_article_soup(self, page_soup): # pragma: no cover
+        for url in self.generate_page_url():
+            try:
+                yield self.soupify_webpage(url)
+            except Exception as ex: #TODO: same as before
+                print(f"Page {url} not found.")
+                raise ex
+
+    def get_article_soup(self, page_soup):
         """
         Generator that yields the soup of every article 
         found on the given high-level page.
         """
-        pass
-    
-    def scrape_article_headline(self, article_soup):
-        """
-        """
-        pass
 
-    def scrape_article_date(self, article_soup):
-        """
-        """
-        pass
+        for article in page_soup.find_all('article'):
+            article_link = article.find('a')['href']
+            yield self.soupify_webpage(article_link)
 
-    def scrape_article_content(self, article_soup):
-        """
-        """
-        pass
+    def scrape_article_item(self, article_soup, item):
+        try:
+            return article_soup.find(*item)['content']
+        except:
+            return article_soup.find(*item).text
 
     def scrape_article(self, article_soup):
         """
         Scrapes the given article for its headline, date, and content.
         Returns them in a list.
         """
-        pass
+        items_to_scrape = [self.headline, self.date, self.content]
+        # return [self.scrape_article_item(article_soup, item) for item in items_to_scrape]
+        
+        scraped_items = []
+        for item in items_to_scrape:
+            new = self.scrape_article_item(article_soup, item)
+            scraped_items.append(new)
+
+        return scraped_items
 
     def scrape_to_csv(self, num_of_articles):
         """

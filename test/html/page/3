@@ -38,12 +38,12 @@
 
 <body>
 <div>
-    <h1>Example Page 2</h1>
-    <div class="entry-content">
+    <h1>Example Page 3</h1>
+    <article class="entry-content">
         <p>This domain is for use in illustrative examples in documents. You may use this
         domain in literature without prior coordination or asking for permission.</p>
         <p><a href="ExamplePost.html">More information...</a></p>
-    </div>
+    </article>
 </div>
 
 
