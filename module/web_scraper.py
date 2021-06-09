@@ -1,25 +1,31 @@
 import requests
 from bs4 import BeautifulSoup
 
+class Item:
+    def __init__(self, name, tag, attribute={'':''}):
+        self.name = name
+        self.tag = tag
+        self.attribute = attribute
+
 class WebScraper:
     """
     WebScraper:
     """
 
-    def __init__(self, url,
-                 headline_tag='h1',
-                 headline_attr=('', ''),
-                 date_tag='meta',
-                 date_attr=('property', 'article:published_time'),
-                 content_tag='div',
-                 content_attr=('class', 'entry-content')
-                 ):
-
+    def __init__(self, url, *items: Item):
         self.url = url
-        self.headline = ( headline_tag, { headline_attr[0] : headline_attr[1]} )
-        self.date =     ( date_tag,     { date_attr[0] : date_attr[1]} )
-        self.content =  ( content_tag,  { content_attr[0] : content_attr[1]} )
+        self.items = [  Item('headline', 'h1'),
+                        Item('date', 'meta', {'property': 'article:published_time'}),
+                        Item('content', 'div', {'class': 'entry-content'}) ]
         
+        for new_item in items:
+            for default_item in self.items:
+                if new_item.name == default_item.name:
+                    self.items.remove(default_item)
+            
+            self.items.append(new_item)
+                
+
     def generate_page_url(self):
         """
         Generator that yields high-level page urls:
@@ -65,22 +71,20 @@ class WebScraper:
             article_link = article.find('a')['href']
             yield self.soupify_webpage(article_link)
 
-    def scrape_article_item(self, article_soup, item):
+    def scrape_article_item(self, article_soup, item: Item):
         try:
-            return article_soup.find(*item)['content']
+            return article_soup.find(item.tag, item.attribute)['content']
         except:
-            return article_soup.find(*item).text
+            return article_soup.find(item.tag, item.attribute).text
 
     def scrape_article(self, article_soup):
         """
         Scrapes the given article for its headline, date, and content.
         Returns them in a list.
         """
-        items_to_scrape = [self.headline, self.date, self.content]
-        # return [self.scrape_article_item(article_soup, item) for item in items_to_scrape]
         
         scraped_items = []
-        for item in items_to_scrape:
+        for item in self.items:
             new = self.scrape_article_item(article_soup, item)
             scraped_items.append(new)
 
