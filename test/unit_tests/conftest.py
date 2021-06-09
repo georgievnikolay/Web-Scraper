@@ -16,22 +16,16 @@ sys.path.append(
 )
 
 @pytest.fixture
-def example_html():
-    with open("./test/html/Example.html", "r") as html_file:
-        soup = BeautifulSoup(html_file, 'lxml')
-    return soup
-
-@pytest.fixture
-def example_page2():
-    with open("./test/html/page/2", "r") as html_file:
-        soup = BeautifulSoup(html_file, 'lxml')
-    return soup
-
-@pytest.fixture
-def example_page3():
-    with open("./test/html/page/3", "r") as html_file:
-        soup = BeautifulSoup(html_file, 'lxml')
-    return soup
+def example_pages():
+    files = [   open("./test/html/Example.html", 'r'), 
+                open("./test/html/page/2", 'r'), 
+                open("./test/html/page/3", 'r') ]
+    soups = []
+    for f in files: 
+        soups.append(BeautifulSoup(f, 'lxml'))
+        f.close()
+    
+    return soups
 
 @pytest.fixture
 def example_post():

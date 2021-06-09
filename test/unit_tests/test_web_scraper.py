@@ -22,25 +22,26 @@ def test_generate_page_url():
         assert generator.__next__() == f"https://example.net/page/{page}"
 
 @patch("module.web_scraper.WebScraper.soupify_webpage", soupify_mock)
-def test_generate_webpage_soup(example_html, example_page2, example_page3):
-    expected = [example_html, example_page2, example_page3]
+def test_generate_webpage_soup(example_pages):
 
     with pytest.raises(Exception):
         for i, soup in enumerate(WebScraper("").generate_webpage_soup()):
-            assert soup == expected[i]
+            assert soup == example_pages[i]
             if i == 2: break
 
 @patch("module.web_scraper.WebScraper.soupify_webpage", soupify_mock)
-def test_get_article_soup(example_html, example_post):
-    for result in WebScraper("").get_article_soup(example_html):
-        assert result == example_post
+def test_get_article_soup(example_pages, example_post):
+    
+    for page in example_pages:
+        scraper_gen = WebScraper("").get_article_soup(page)
+        assert scraper_gen.__next__() == example_post
 
-def test_scrape_article_item(example_post, example_post_content):   
+def test_scrape_article_item(example_post, example_post_content):
     scraper = WebScraper("")
 
     article_items = [scraper.headline, scraper.date, scraper.content]
 
-    for index in range(2):
+    for index in range(3):
         assert scraper.scrape_article_item(example_post, article_items[index]) == example_post_content[index]
         
 def test_scrape_article(example_post, example_post_content):
