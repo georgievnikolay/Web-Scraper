@@ -1,42 +1,31 @@
 #!/usr/bin/env python3
 
-import argparse
-import module  # This will not link correctly if you use from imports
+from module.web_scraper import WebScraper, Item # pragma: no cover
 
+if __name__ == "__main__": 
+    travel_smart = WebScraper(  "https://www.travelsmart.bg/", 
+                                Item('content', 'div', {'class': 'post-content'}) )
 
-def some_helper(argument):
-    """Some echo-like helper function.
+    travel_smart.scrape_to_csv(20, "travelsmart.csv")
 
-    Returns a string that contains the input argument.
+    # Examples to try with other blogs and more items
 
-    :param argument: the argument to print in the return string
-    :type argument: any
-    :returns: "I repeat: " followed by the input argument
-    :rtype: str"""
-    return f"I repeat: {argument}"
+    # travel_smart = WebScraper("https://www.travelsmart.bg/", 
+    #                           Item('content', 'div', {'class': 'post-content'}),
+    #                           Item('modified', 'meta', {'property': 'article:modified_time'}))
+    # travel_smart.scrape_to_csv(20, "travelsmart.csv")
 
+    # bozho = WebScraper( "https://blog.bozho.net/", 
+    #                     Item('content', 'div', {'class' : 'post-content'}) )
+    # bozho.scrape_to_csv(20, 'bozho')
 
-def parse_args():  # pragma: no cover
-    """Parse the input args."""
-    parser = argparse.ArgumentParser(
-        description="Blueprint executable. <To be updated by developer>"
-    )
-    return parser.parse_args()
+    # igicheva = WebScraper("https://igicheva.wordpress.com/all-posts/")
+    # igicheva.scrape_to_csv(20, 'igicheva')
 
+    # pateshestvenik = WebScraper("https://pateshestvenik.com/", 
+    #                             Item('content', 'div', {'class' : 'content'}) )
+    # pateshestvenik.scrape_to_csv(20, 'pateshestvenik')
 
-def main(args):  # pragma: no cover
-    """Main."""
-    print(f"args: {args}")
-    print(f"example function result: {module.example_function()}")
-
-    example_inst = module.Example()
-    print(
-        f"example class result:"
-        f"\n - instance: {example_inst}"
-        f"\n - member:   {example_inst.example}"
-    )
-
-
-if __name__ == "__main__":
-    args = parse_args()
-    main(args)
+    # az_moga = WebScraper("https://az-moga.com/", 
+    #                       Item('content', 'div', {'class' : 'content'}) )
+    # az_moga.scrape_to_csv(20, 'az_moga')
