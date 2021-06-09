@@ -5,6 +5,7 @@ NOTE: This file is automatically included when running pytest.
       There is no need to import it explicitly in the test files.
 """
 
+from module.web_scraper import WebScraper, Item
 import os
 import sys
 import pytest
@@ -17,7 +18,18 @@ sys.path.append(
 
 
 @pytest.fixture
-def example_pages():
+def default_scraper():
+    return WebScraper("https://example.net")
+
+
+@pytest.fixture
+def custom_scraper():
+    return WebScraper(  "https://example.net",
+                        Item('content', 'div', {'class': 'post-content'}) )
+
+
+@pytest.fixture
+def example_page_soups():
     files = [open("./test/html/Example.html", 'r'),
              open("./test/html/page/2", 'r'),
              open("./test/html/page/3", 'r')]
@@ -30,7 +42,7 @@ def example_pages():
 
 
 @pytest.fixture
-def example_posts():
+def example_post_soups():
     files = [open("./test/html/ExamplePost.html", 'r'),
              open("./test/html/ExamplePost2.html", 'r')]
     soups = []
@@ -44,7 +56,7 @@ def example_posts():
 @pytest.fixture
 def example_post_content():
     headline = "Example Post"
-    date = "2014-04-30T10:15:33+00:00"
+    date =      "2014-04-30T10:15:33+00:00"
     content =   "\nThis domain is for use in illustrative examples in documents. You may use this" \
                 "\ndomain in literature without prior coordination or asking for permission." \
                 "\nHome page...\n"

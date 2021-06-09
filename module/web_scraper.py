@@ -1,13 +1,21 @@
 import requests
 from bs4 import BeautifulSoup
 
+
 class Item:
-    def __init__(self, name, tag, attribute={'':''}):
+
+    def __init__(self, name: str, tag: str, attribute={'': ''}):  # pragma: no cover
         self.name = name
         self.tag = tag
         self.attribute = attribute
 
-class WebScraper:
+    def set(self, item):
+        self.name = item.name
+        self.tag = item.tag
+        self.attribute = item.attribute
+
+
+class WebScraper(Item):
     """
     WebScraper:
     """
@@ -17,14 +25,18 @@ class WebScraper:
         self.items = [  Item('headline', 'h1'),
                         Item('date', 'meta', {'property': 'article:published_time'}),
                         Item('content', 'div', {'class': 'entry-content'}) ]
-        
+
         for new_item in items:
+            found = False
+            
             for default_item in self.items:
                 if new_item.name == default_item.name:
-                    self.items.remove(default_item)
+                    default_item.set(new_item)
+                    found = True
             
-            self.items.append(new_item)
-                
+            if not found:
+                self.items.append(new_item)
+
 
     def generate_page_url(self):
         """
@@ -41,12 +53,12 @@ class WebScraper:
             yield full_url
 
     @staticmethod
-    def soupify_webpage(url): # pragma: no cover
+    def soupify_webpage(url):  # pragma: no cover
         """
         """
         response = requests.get(url)
         if response.status_code != 200:
-            raise Exception #TODO: more specific exception
+            raise Exception  # TODO: more specific exception
         return BeautifulSoup(response.text, 'lxml')
 
     def generate_webpage_soup(self):
@@ -57,7 +69,7 @@ class WebScraper:
         for url in self.generate_page_url():
             try:
                 yield self.soupify_webpage(url)
-            except Exception as ex: #TODO: same as before
+            except Exception as ex:  # TODO: same as before
                 print(f"Page {url} not found.")
                 raise ex
 
@@ -75,14 +87,17 @@ class WebScraper:
         try:
             return article_soup.find(item.tag, item.attribute)['content']
         except:
-            return article_soup.find(item.tag, item.attribute).text
+            try:
+                return article_soup.find(item.tag, item.attribute).text
+            except:
+                return None
 
     def scrape_article(self, article_soup):
         """
         Scrapes the given article for its headline, date, and content.
         Returns them in a list.
         """
-        
+
         scraped_items = []
         for item in self.items:
             new = self.scrape_article_item(article_soup, item)
