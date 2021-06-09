@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from requests.exceptions import RequestException
 from module.web_scraper import WebScraper, Item
 
 from unittest.mock import patch
@@ -7,24 +8,31 @@ import pytest
 
 @staticmethod
 def soupify_mock(url):
-    file = open("test/html/" + url, "r")
+    try:
+        file = open("test/html/" + url, "r")
+    except:
+        raise RequestException
     return BeautifulSoup(file, 'lxml')
 
-def test_init():
+def page_url_mock(_):
+    yield "Example.html"
+    yield "page/2"
+    yield "page/3"
+    yield "page/4"
+
+def test_init(expected_init):
     scraper = WebScraper(   "https://example.net",
                             Item('content', 'div', {'class': 'post-content'}),
                             Item('site', 'meta', {'property': 'og:site_name'}) )
 
-    expected_names = [ 'headline', 'date', 'content', 'site' ]
-    expected_tags =  [ 'h1', 'meta', 'div', 'meta' ]
-    expected_attributes = [ {'':''}, {'property': 'article:published_time'}, 
-                            {'class': 'post-content'}, {'property': 'og:site_name'} ]
-
-    for i in range(len(expected_names)):
-        assert scraper.items[i].name == expected_names[i]
-        assert scraper.items[i].tag == expected_tags[i]
-        assert scraper.items[i].attribute == expected_attributes[i]
-
+    i = 0
+    for item in scraper.items:
+        assert item.name == expected_init['names'][i]
+        assert item.tag == expected_init['tags'][i]
+        assert item.attribute == expected_init['attributes'][i]
+        i += 1
+    
+    assert i == len(expected_init['names'])
 
 def test_generate_page_url(default_scraper: WebScraper):
     generator = default_scraper.generate_page_url()
@@ -36,12 +44,13 @@ def test_generate_page_url(default_scraper: WebScraper):
 
 
 @patch("module.web_scraper.WebScraper.soupify_webpage", soupify_mock)
+@patch("module.web_scraper.WebScraper.generate_page_url", page_url_mock)
 def test_generate_webpage_soup(default_scraper: WebScraper, example_page_soups):
 
-    with pytest.raises(Exception):
+    with pytest.raises(RequestException):
         for i, soup in enumerate(default_scraper.generate_webpage_soup()):
             assert soup == example_page_soups[i]
-
+        
 
 @patch("module.web_scraper.WebScraper.soupify_webpage", soupify_mock)
 def test_get_article_soup(default_scraper: WebScraper,
@@ -67,7 +76,19 @@ def test_scrape_article_item(default_scraper: WebScraper, custom_scraper : WebSc
             assert scraped == example_post_content[i]
 
 
-def test_scrape_article(example_post_soups, example_post_content):
-    assert WebScraper("").scrape_article(
+def test_scrape_article(default_scraper, example_post_soups, example_post_content):
+    assert default_scraper.scrape_article(
         example_post_soups[0]) == example_post_content
-    #TODO: scrape more than 3 items
+    
+    scraper = WebScraper(   "https://example.net",
+                            Item('content', 'div', {'class': 'post-content'}),
+                            Item('site', 'meta', {'property': 'og:site_name'}) )
+    
+    example_post_content.append('Example')
+    example_post_content[1] = None
+
+    assert scraper.scrape_article(
+        example_post_soups[1]) == example_post_content
+
+def test_scrape_to_csv():
+    pass

@@ -1,4 +1,5 @@
 import requests
+from requests import RequestException
 from bs4 import BeautifulSoup
 
 
@@ -9,7 +10,7 @@ class Item:
         self.tag = tag
         self.attribute = attribute
 
-    def set(self, item):
+    def set(self, item): # pragma: no cover
         self.name = item.name
         self.tag = item.tag
         self.attribute = item.attribute
@@ -58,7 +59,8 @@ class WebScraper(Item):
         """
         response = requests.get(url)
         if response.status_code != 200:
-            raise Exception  # TODO: more specific exception
+            raise RequestException
+
         return BeautifulSoup(response.text, 'lxml')
 
     def generate_webpage_soup(self):
@@ -66,12 +68,14 @@ class WebScraper(Item):
         Generator that yields the soup of each high-level page.
         """
 
-        for url in self.generate_page_url():
+        for url in self.generate_page_url(): # pragma: no branch
             try:
                 yield self.soupify_webpage(url)
-            except Exception as ex:  # TODO: same as before
-                print(f"Page {url} not found.")
+
+            except RequestException as ex:
+                print(f"Request to get {url} failed.")
                 raise ex
+
 
     def get_article_soup(self, page_soup):
         """
@@ -94,7 +98,7 @@ class WebScraper(Item):
 
     def scrape_article(self, article_soup):
         """
-        Scrapes the given article for its headline, date, and content.
+        Scrapes the given article for the specified items.
         Returns them in a list.
         """
 
@@ -108,6 +112,6 @@ class WebScraper(Item):
     def scrape_to_csv(self, num_of_articles):
         """
         Scrapes the given number of latest articles 
-        and writes them to a csv file in three columns.
+        and writes them to a csv file in named columns.
         """
         pass

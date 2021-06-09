@@ -18,6 +18,15 @@ sys.path.append(
 
 
 @pytest.fixture
+def expected_init():
+    names = [ 'headline', 'date', 'content', 'site' ]
+    tags =  [ 'h1', 'meta', 'div', 'meta' ]
+    attributes = [ {'':''}, {'property': 'article:published_time'}, 
+                            {'class': 'post-content'}, {'property': 'og:site_name'} ]
+    
+    return {'names': names, 'tags': tags, 'attributes': attributes} 
+
+@pytest.fixture
 def default_scraper():
     return WebScraper("https://example.net")
 
