@@ -1,7 +1,7 @@
 import requests
 from requests import RequestException
 from bs4 import BeautifulSoup
-
+import csv
 
 class Item:
 
@@ -18,7 +18,7 @@ class Item:
 
 class WebScraper(Item):
     """
-    WebScraper:
+    WebScraper with default items given the wordpress standard
     """
 
     def __init__(self, url, *items: Item):
@@ -26,6 +26,7 @@ class WebScraper(Item):
         self.items = [  Item('headline', 'h1'),
                         Item('date', 'meta', {'property': 'article:published_time'}),
                         Item('content', 'div', {'class': 'entry-content'}) ]
+        self.csv_file = None
 
         for new_item in items:
             found = False
@@ -77,7 +78,7 @@ class WebScraper(Item):
                 raise ex
 
 
-    def get_article_soup(self, page_soup):
+    def generate_article_soup(self, page_soup):
         """
         Generator that yields the soup of every article 
         found on the given high-level page.
@@ -109,9 +110,40 @@ class WebScraper(Item):
 
         return scraped_items
 
-    def scrape_to_csv(self, num_of_articles):
+    def init_csv_file(self, filename):
+        field_names = [item.name for item in self.items]
+
+        if not ".csv" in filename:
+            filename += ".csv"
+        
+        self.csv_file = open(filename, 'w', newline='', encoding='utf-8')
+        
+        writer = csv.writer(self.csv_file)
+        writer.writerow(field_names)
+
+        return writer
+
+    def scrape_to_csv(self, num_of_articles, filename): # pragma: no cover
         """
         Scrapes the given number of latest articles 
         and writes them to a csv file in named columns.
         """
-        pass
+        num_scraped = 0
+
+        writer = self.init_csv_file(filename)
+
+        try:
+            for page_soup in self.generate_webpage_soup():
+                for article_soup in self.generate_article_soup(page_soup):
+                    scraped_items = self.scrape_article(article_soup)
+                    writer.writerow(scraped_items)
+
+                    num_scraped += 1
+                    if num_scraped == num_of_articles:
+                        self.csv_file.close()
+                        return num_scraped
+
+        except RequestException:
+            print(f"Only {num_scraped} articles found.")
+            return num_scraped
+

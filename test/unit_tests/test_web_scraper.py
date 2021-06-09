@@ -1,10 +1,12 @@
+import os
+import csv
+
 from bs4 import BeautifulSoup
 from requests.exceptions import RequestException
 from module.web_scraper import WebScraper, Item
 
 from unittest.mock import patch
 import pytest
-
 
 @staticmethod
 def soupify_mock(url):
@@ -53,11 +55,11 @@ def test_generate_webpage_soup(default_scraper: WebScraper, example_page_soups):
         
 
 @patch("module.web_scraper.WebScraper.soupify_webpage", soupify_mock)
-def test_get_article_soup(default_scraper: WebScraper,
+def test_generate_article_soup(default_scraper: WebScraper,
                           example_page_soups, example_post_soups):
 
     for page in example_page_soups:
-        for soup in default_scraper.get_article_soup(page):
+        for soup in default_scraper.generate_article_soup(page):
             assert soup == example_post_soups[0]
 
 
@@ -90,5 +92,31 @@ def test_scrape_article(default_scraper, example_post_soups, example_post_conten
     assert scraper.scrape_article(
         example_post_soups[1]) == example_post_content
 
-def test_scrape_to_csv():
-    pass
+@pytest.mark.parametrize('file_name', ['tmptest.csv', 'tmptest'])
+def test_init_csv_file(default_scraper, file_name):
+    try:
+        os.remove('tmptest.csv')
+    except:
+        pass
+
+    default_scraper.init_csv_file(file_name)
+    default_scraper.csv_file.close()
+    
+    with open("tmptest.csv", 'r') as file:
+        actual = file.readline()
+    os.remove('tmptest.csv')
+
+    assert actual == "headline,date,content\n"
+
+@patch("module.web_scraper.WebScraper.soupify_webpage", soupify_mock)
+@patch("module.web_scraper.WebScraper.generate_page_url", page_url_mock)
+def test_scrape_to_csv(default_scraper):
+    try:
+        os.remove('tmptest.csv')
+    except:
+        pass
+
+    assert default_scraper.scrape_to_csv(20, "tmptest.csv") == 5
+    
+    os.remove('tmptest.csv')
+    
