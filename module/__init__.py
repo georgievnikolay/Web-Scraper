@@ -1,5 +1,6 @@
 """
-Module.
+Currently only contains the web_scraper module.
+Import the WebScraper and Item classes and use them per their documentation.
 
-<To be updated by developer>
+More to come.
 """

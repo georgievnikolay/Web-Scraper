@@ -26,6 +26,7 @@ def expected_init():
     
     return {'names': names, 'tags': tags, 'attributes': attributes} 
 
+
 @pytest.fixture
 def default_scraper():
     return WebScraper("https://example.net")
@@ -33,15 +34,15 @@ def default_scraper():
 
 @pytest.fixture
 def custom_scraper():
-    return WebScraper(  "https://example.net",
-                        Item('content', 'div', {'class': 'post-content'}) )
+    return WebScraper("https://example.net",
+                      Item('content', 'div', {'class': 'post-content'}) )
 
 
 @pytest.fixture
 def example_page_soups():
-    files = [open("./test/html/Example.html", 'r'),
-             open("./test/html/page/2", 'r'),
-             open("./test/html/page/3", 'r')]
+    files = [ open("./test/html/Example.html", 'r'),
+              open("./test/html/page/2", 'r'),
+              open("./test/html/page/3", 'r') ]
     soups = []
     for f in files:
         soups.append(BeautifulSoup(f, 'lxml'))
@@ -64,7 +65,7 @@ def example_post_soups():
 
 @pytest.fixture
 def example_post_content():
-    headline = "Example Post"
+    headline =  "Example Post"
     date =      "2014-04-30T10:15:33+00:00"
     content =   "\nThis domain is for use in illustrative examples in documents. You may use this" \
                 "\ndomain in literature without prior coordination or asking for permission." \

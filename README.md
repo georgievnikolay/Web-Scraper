@@ -1,4 +1,4 @@
-# Web scraper for blogs
+# Web Scraper for WordPress-based Blogs
 
 # Have fun!
 
