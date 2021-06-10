@@ -7,6 +7,7 @@ from module.web_scraper import WebScraper, Item
 from unittest.mock import patch
 import pytest
 
+
 @staticmethod
 def soupify_mock(url):
     try:
@@ -15,11 +16,13 @@ def soupify_mock(url):
         raise RequestException
     return BeautifulSoup(file, 'lxml')
 
+
 def page_url_mock(_):
     yield "Example.html"
     yield "page/2"
     yield "page/3"
     yield "page/4"
+
 
 def test_init(expected_init):
     scraper = WebScraper("https://example.net",
@@ -35,12 +38,13 @@ def test_init(expected_init):
     
     assert i == len(expected_init['names'])
 
+
 def test_generate_page_url(default_scraper: WebScraper):
     generator = default_scraper.generate_page_url()
 
     assert generator.__next__() == "https://example.net"
 
-    for page in range(2, 12):
+    for page in range(2, 20): # don't expect /page/1
         assert generator.__next__() == f"https://example.net/page/{page}"
 
 
@@ -91,6 +95,7 @@ def test_scrape_article(default_scraper, example_post_soups, example_post_conten
     assert scraper.scrape_article(
         example_post_soups[1]) == example_post_content
 
+
 @pytest.mark.parametrize('file_name', ['tmptest.csv', 'tmptest'])
 def test_init_csv_file(default_scraper, file_name):
     try:
@@ -107,15 +112,21 @@ def test_init_csv_file(default_scraper, file_name):
 
     assert actual == "headline,date,content\n"
 
+
 @patch("module.web_scraper.WebScraper.soupify_webpage", soupify_mock)
 @patch("module.web_scraper.WebScraper.generate_page_url", page_url_mock)
 def test_scrape_to_csv(default_scraper):
+    test_file_name = 'tmptest.csv'
+    max_posts = 5
+
     try:
-        os.remove('tmptest.csv')
+        os.remove(test_file_name)
     except:
         pass
 
-    assert default_scraper.scrape_to_csv(20, "tmptest.csv") == 5
-    
-    os.remove('tmptest.csv')
-    
+    assert default_scraper.scrape_to_csv(20, test_file_name) == max_posts
+    with open(test_file_name, 'r') as test_file:
+        with open('test/example.csv', 'r') as example_file:
+            assert example_file.read() == test_file.read()
+
+    os.remove(test_file_name)

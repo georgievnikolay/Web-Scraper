@@ -1,6 +1,6 @@
 # Web Scraper for WordPress-based Blogs
 
-# Have fun!
+### By Julia, Kiril, Martina, and Nikolay
 
 Web scraper - automatically gather info from selected websites (blogs):
 1. Develop a scraper using a Test Driven Development process.

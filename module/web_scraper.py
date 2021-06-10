@@ -3,6 +3,7 @@ from requests import RequestException
 from bs4 import BeautifulSoup
 import csv
 
+
 class Item:
     """
     An Item object represents the signature of an HTML tag.
@@ -40,6 +41,8 @@ class WebScraper(Item):
     to provide their specific signature: the element type (tag), eg 'div', 'h2', etc;
     and any uniquely identifying property, eg 'class content', 'id headline', etc.
     This is done using Item objects.
+    Use set_article_search_item() if the link to each article is not found correctly:
+    pass an appropriate Item with uniquely identifying attributes.
     """
 
     def __init__(self, url, *items: Item):
@@ -54,6 +57,8 @@ class WebScraper(Item):
         self.items = [  Item('headline', 'h1'),
                         Item('date', 'meta', {'property': 'article:published_time'}),
                         Item('content', 'div', {'class': 'entry-content'}) ]
+        
+        self.article_item = Item('', 'article', {'':''})
         self.csv_file = None
 
         for new_item in items:
@@ -66,7 +71,6 @@ class WebScraper(Item):
             
             if not found:
                 self.items.append(new_item)
-
 
     def generate_page_url(self):
         """
@@ -88,8 +92,10 @@ class WebScraper(Item):
         Request the page at url and return a corresponding BeautifulSoup object.
         If the request fails, a RequestException is raised.
         """
+        success_status = 200
+
         response = requests.get(url)
-        if response.status_code != 200:
+        if response.status_code != success_status:
             raise RequestException
 
         return BeautifulSoup(response.text, 'lxml')
@@ -107,6 +113,12 @@ class WebScraper(Item):
                 print(f"Request to get {url} failed.")
                 raise ex
 
+    def set_article_search_item(self, item): # pragma: no cover
+        """
+        Set the signature by which to find article links.
+        The default is any 'article' element.
+        """
+        self.article_item.set(item)
 
     def generate_article_soup(self, page_soup):
         """
@@ -114,22 +126,24 @@ class WebScraper(Item):
         found on the given high-level page.
         """
 
-        for article in page_soup.find_all('article'):
+        for article in page_soup.find_all(self.article_item.tag, self.article_item.attribute):
             article_link = article.find('a')['href']
             yield self.soupify_webpage(article_link)
 
-    def scrape_article_item(self, article_soup, item: Item):
+    @staticmethod
+    def scrape_article_item(article_soup, item: Item):
         """
         Attempt to find an element corresponding to the given item's signature
         within the given BeautifulSoup object. Return a string of its text contents.
         """
         try:
             return article_soup.find(item.tag, item.attribute)['content']
-        except:
-            try:
-                return article_soup.find(item.tag, item.attribute).text
-            except:
-                return None
+        
+        except KeyError: # An item was found, but it has no 'content' attribute
+            return article_soup.find(item.tag, item.attribute).text
+        
+        except TypeError: # No such item was found on the page
+            return None
 
     def scrape_article(self, article_soup):
         """
@@ -185,4 +199,3 @@ class WebScraper(Item):
             print(f"Only {num_scraped} articles found.")
             self.csv_file.close()
             return num_scraped
-
