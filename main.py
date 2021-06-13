@@ -7,6 +7,10 @@ if __name__ == "__main__":
                               Item('content', 'div', {'class': 'post-content'}) )
 
     travel_smart.scrape_to_csv(20, "output/travelsmart.csv")
+    
+    # travel_smart = WebScraper("https://www.travelsmart.bg/")
+    # travel_smart.add_items( Item('content', 'div', {'class': 'post-content'}) )
+    # travel_smart.scrape_to_csv(20, "output/travelsmart.csv")
 
 
     """ Working examples with the other blogs """

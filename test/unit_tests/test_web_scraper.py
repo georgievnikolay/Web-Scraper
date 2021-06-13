@@ -24,10 +24,10 @@ def page_url_mock(_):
     yield "page/4"
 
 
-def test_init(expected_init):
-    scraper = WebScraper("https://example.net",
-                         Item('content', 'div', {'class': 'post-content'}),
-                         Item('site', 'meta', {'property': 'og:site_name'}) )
+def test_add_items(expected_init):
+    scraper = WebScraper("https://example.net")
+    scraper.add_items( Item('content', 'div', {'class': 'post-content'}),
+                       Item('site', 'meta', {'property': 'og:site_name'}) )
 
     i = 0
     for item in scraper.items:
@@ -85,9 +85,9 @@ def test_scrape_article(default_scraper, example_post_soups, example_post_conten
     assert default_scraper.scrape_article(
         example_post_soups[0]) == example_post_content
     
-    scraper = WebScraper("https://example.net",
-                         Item('content', 'div', {'class': 'post-content'}),
-                         Item('site', 'meta', {'property': 'og:site_name'}) )
+    scraper = WebScraper("https://example.net")
+    scraper.add_items( Item('content', 'div', {'class': 'post-content'}),
+                       Item('site', 'meta', {'property': 'og:site_name'}) )
     
     example_post_content.append('Example')
     example_post_content[1] = None

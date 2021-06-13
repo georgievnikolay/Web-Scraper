@@ -45,7 +45,8 @@ class WebScraper(Item):
     pass an appropriate Item with uniquely identifying attributes.
     """
 
-    def __init__(self, url, *items: Item):
+    def __init__(self, url): # pragma: no cover
+        ### OUT OF DATE
         """
         Constructor. Provide Item objects where the WP defaults do not suffice.
         
@@ -61,14 +62,15 @@ class WebScraper(Item):
         self.article_item = Item('', 'article', {'':''})
         self.csv_file = None
 
+    def add_items(self, *items : Item):
         for new_item in items:
             found = False
-            
+
             for default_item in self.items:
                 if new_item.name == default_item.name:
                     default_item.set(new_item)
                     found = True
-            
+
             if not found:
                 self.items.append(new_item)
 

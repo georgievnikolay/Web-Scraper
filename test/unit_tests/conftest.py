@@ -34,8 +34,9 @@ def default_scraper():
 
 @pytest.fixture
 def custom_scraper():
-    return WebScraper("https://example.net",
-                      Item('content', 'div', {'class': 'post-content'}) )
+    scraper = WebScraper("https://example.net")
+    scraper.add_items( Item('content', 'div', {'class': 'post-content'}) )
+    return scraper
 
 
 @pytest.fixture
