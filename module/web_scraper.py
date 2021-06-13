@@ -173,7 +173,7 @@ class WebScraper:
         if not ".csv" in filename:
             filename += ".csv"
         
-        self.csv_file = open(filename, 'w', newline='', encoding='utf-8')
+        self.csv_file = open(filename, 'w', newline='', encoding='utf-8-sig')
         
         writer = csv.writer(self.csv_file)
         writer.writerow(field_names)

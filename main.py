@@ -1,44 +1,27 @@
 #!/usr/bin/env python3
 
 from module.web_scraper import WebScraper, Item # pragma: no cover
+from module.default_blogs import predefined_blogs
+import argparse
+
+def parse_args():  # pragma: no cover
+    """Parse the input args."""
+    parser = argparse.ArgumentParser(
+        description="WebScraper"
+    )
+    parser.add_argument('website', type=str, help='URL to your favorite blog')
+    parser.add_argument('-i', '--items', action='store_true', help='Menu for item customization')
+    
+    return parser.parse_args()
+
+
+def main(args):
+    if args.website in predefined_blogs.keys():
+        predefined_blogs[args.website]()
+    else:
+        print("We ain't ready for that, mate!")
+    
 
 if __name__ == "__main__": 
-    travel_smart = WebScraper("https://www.travelsmart.bg/", 
-                              Item('content', 'div', {'class': 'post-content'}) )
-
-    travel_smart.scrape_to_csv(20, "output/travelsmart.csv")
-    
-    # travel_smart = WebScraper("https://www.travelsmart.bg/")
-    # travel_smart.add_items( Item('content', 'div', {'class': 'post-content'}) )
-    # travel_smart.scrape_to_csv(20, "output/travelsmart.csv")
-
-
-    """ Working examples with the other blogs """
-    # Just uncomment and run
-
-    # travel_smart = WebScraper("https://www.travelsmart.bg/", 
-    #                           Item('content', 'div', {'class': 'post-content'}),
-    #                           Item('modified', 'meta', {'property': 'article:modified_time'}))
-    # travel_smart.scrape_to_csv(20, "output/travelsmart_mod.csv")
-
-
-    # bozho = WebScraper("https://blog.bozho.net/", 
-    #                    Item('content', 'div', {'class' : 'post-content'}) )
-    # bozho.scrape_to_csv(20, 'output/bozho')
-
-
-    # pateshestvenik = WebScraper("https://pateshestvenik.com/", 
-    #                             Item('content', 'div', {'class' : 'content'}) )
-    # pateshestvenik.scrape_to_csv(20, 'output/pateshestvenik')
-
-
-    # az_moga = WebScraper("https://az-moga.com/", 
-    #                       Item('content', 'div', {'class' : 'entry-body'}) )
-    # az_moga.scrape_to_csv(20, 'output/az_moga')
-
-
-    # igicheva = WebScraper("https://igicheva.wordpress.com/all-posts/",
-    #                       Item('headline', 'h1', {'class': 'entry-title'}) )
-
-    # igicheva.set_article_search_item(Item('', 'article', {'class': 'type-post'}))
-    # igicheva.scrape_to_csv(20, 'output/igicheva')
+    args = parse_args()
+    main(args)
