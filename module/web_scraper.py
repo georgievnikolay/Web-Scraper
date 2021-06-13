@@ -9,7 +9,7 @@ class Item:
     An Item object represents the signature of an HTML tag.
     """
 
-    def __init__(self, name: str, tag: str, attribute={'': ''}):  # pragma: no cover
+    def __init__(self, name: str, tag: str, attribute=None):  # pragma: no cover
         """
         Constructor.
         
@@ -21,15 +21,18 @@ class Item:
         """
         self.name = name
         self.tag = tag
-        self.attribute = attribute
-
+        if attribute is None:
+            self.attribute = {'': ''}
+        else:
+            self.attribute = attribute
+    
     def set(self, item): # pragma: no cover
         self.name = item.name
         self.tag = item.tag
         self.attribute = item.attribute
 
 
-class WebScraper(Item):
+class WebScraper:
     """
     This webscraper has been designed mainly to work on WordPress-based blogs.
     
