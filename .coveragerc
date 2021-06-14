@@ -8,6 +8,7 @@ include =
 omit =
     test/*
     scrape.py
+    module/default_blogs.py
 
 [report]
 # Regexes for lines to exclude from consideration

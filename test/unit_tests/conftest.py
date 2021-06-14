@@ -5,11 +5,14 @@ NOTE: This file is automatically included when running pytest.
       There is no need to import it explicitly in the test files.
 """
 
-from module.web_scraper import WebScraper, Item
 import os
 import sys
+
 import pytest
+
+from module.web_scraper import WebScraper, Item
 from bs4 import BeautifulSoup
+import pandas as pd
 
 # allow the contents to be found automatically as if we were in that directory
 sys.path.append(
@@ -73,3 +76,9 @@ def example_post_content():
                 "\nHome page...\n"
 
     return [headline, date, content]
+
+
+@pytest.fixture
+def example_df():
+    df = pd.read_csv('./test/example.csv')
+    return df

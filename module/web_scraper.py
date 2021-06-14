@@ -1,7 +1,10 @@
 import requests
 from requests import RequestException
 from bs4 import BeautifulSoup
+
+import pandas as pd
 import csv
+import json
 
 
 class Item:
@@ -63,7 +66,7 @@ class WebScraper:
                         Item('content', 'div', {'class': 'entry-content'}) ]
         
         self.article_item = Item('', 'article', {'':''})
-        self.csv_file = None
+        self.df = None    
 
     def add_items(self, *items : Item):
         for new_item in items:
@@ -163,44 +166,41 @@ class WebScraper:
 
         return scraped_items
 
-    def init_csv_file(self, filename):
+    def init_data_frame(self):
+        #TODO:DOCSTRING OUT OF DATE
         """
         Open the specified file for writing. Write the item names as column names.
         Return the CSV writer object to be used for the scraped data.
         """
         field_names = [item.name for item in self.items]
+        self.df = pd.DataFrame(columns=field_names)
 
-        if not ".csv" in filename:
-            filename += ".csv"
-        
-        self.csv_file = open(filename, 'w', newline='', encoding='utf-8-sig')
-        
-        writer = csv.writer(self.csv_file)
-        writer.writerow(field_names)
-
-        return writer
-
-    def scrape_to_csv(self, num_of_articles, filename): # pragma: no cover
+    def scrape(self, num_of_articles):
         """
         Scrapes the given number of latest articles 
-        and writes them to a csv file in named columns.
+        and writes them to a data frame in named columns.
         """
         num_scraped = 0
 
-        writer = self.init_csv_file(filename)
+        self.init_data_frame()
 
         try:
-            for page_soup in self.generate_webpage_soup():
+            for page_soup in self.generate_webpage_soup(): # pragma: no branch
                 for article_soup in self.generate_article_soup(page_soup):
                     scraped_items = self.scrape_article(article_soup)
-                    writer.writerow(scraped_items)
+                    
+                    self.df.loc[num_scraped] = scraped_items
 
                     num_scraped += 1
                     if num_scraped == num_of_articles:
-                        self.csv_file.close()
                         return num_scraped
 
         except RequestException:
             print(f"Only {num_scraped} articles found.")
-            self.csv_file.close()
             return num_scraped
+
+    def export_to_csv(self, filename): # pragma: no cover
+        self.df.to_csv(filename, index=False)
+
+    def export_to_json(self, filename): # pragma: no cover
+        self.df.to_json(filename, force_ascii=False, orient='table', indent=4)

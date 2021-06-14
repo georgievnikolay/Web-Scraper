@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from requests.exceptions import RequestException
 from module.web_scraper import WebScraper, Item
 
+import pandas as pd
 from unittest.mock import patch
 import pytest
 
@@ -96,37 +97,19 @@ def test_scrape_article(default_scraper, example_post_soups, example_post_conten
         example_post_soups[1]) == example_post_content
 
 
-@pytest.mark.parametrize('file_name', ['tmptest.csv', 'tmptest'])
-def test_init_csv_file(default_scraper, file_name):
-    try:
-        os.remove('tmptest.csv')
-    except:
-        pass
+def test_init_data_frame(default_scraper):
+    default_scraper.init_data_frame()
 
-    default_scraper.init_csv_file(file_name)
-    default_scraper.csv_file.close()
-    
-    with open("tmptest.csv", 'r') as file:
-        actual = file.readline()
-    os.remove('tmptest.csv')
-
-    assert actual == "headline,date,content\n"
+    assert isinstance(default_scraper.df, pd.DataFrame)
 
 
 @patch("module.web_scraper.WebScraper.soupify_webpage", soupify_mock)
 @patch("module.web_scraper.WebScraper.generate_page_url", page_url_mock)
-def test_scrape_to_csv(default_scraper):
-    test_file_name = 'tmptest.csv'
+def test_scrape(default_scraper, example_df):
     max_posts = 5
 
-    try:
-        os.remove(test_file_name)
-    except:
-        pass
+    assert default_scraper.scrape(3) == 3
+    assert default_scraper.scrape(20) == max_posts
+    assert default_scraper.df.equals(example_df)
 
-    assert default_scraper.scrape_to_csv(20, test_file_name) == max_posts
-    with open(test_file_name, 'r') as test_file:
-        with open('test/example.csv', 'r') as example_file:
-            assert example_file.read() == test_file.read()
 
-    os.remove(test_file_name)
