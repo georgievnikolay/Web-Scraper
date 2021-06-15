@@ -1,5 +1,3 @@
-import os
-
 from bs4 import BeautifulSoup
 from requests.exceptions import RequestException
 from module.web_scraper import WebScraper, Item
@@ -77,7 +75,7 @@ def test_scrape_article_item(default_scraper: WebScraper, custom_scraper : WebSc
     for i, item in enumerate(custom_scraper.items):
         scraped = custom_scraper.scrape_article_item(example_post_soups[1], item)
         if item.name == 'date':
-            assert scraped == None
+            assert scraped is None
         else:
             assert scraped == example_post_content[i]
 

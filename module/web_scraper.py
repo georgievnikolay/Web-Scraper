@@ -3,9 +3,6 @@ from requests import RequestException
 from bs4 import BeautifulSoup
 
 import pandas as pd
-import csv
-import json
-
 
 class Item:
     """
@@ -139,19 +136,28 @@ class WebScraper:
             yield self.soupify_webpage(article_link)
 
     @staticmethod
-    def scrape_article_item(article_soup, item: Item):
-        """
+    def scrape_article_items(article_soup, item: Item): #TODO: Outdated docstring
+        """ 
         Attempt to find an element corresponding to the given item's signature
         within the given BeautifulSoup object. Return a string of its text contents.
         """
-        try:
-            return article_soup.find(item.tag, item.attribute)['content']
+        found_items = article_soup.find_all(item.tag, item.attribute)
         
-        except KeyError: # An item was found, but it has no 'content' attribute
-            return article_soup.find(item.tag, item.attribute).text
-        
-        except TypeError: # No such item was found on the page
+        if found_items is None:
             return None
+
+        try:
+            # contents = map(lambda item: item['content'], found_items)
+            contents = [item['content'] for item in found_items]
+        except KeyError: # An item was found, but it has no 'content' attribute
+            contents = [item.text for item in found_items]
+
+        if len(contents) == 0:
+            return None
+        elif len(contents) == 1:
+            return contents[0]
+        else:
+            return contents
 
     def scrape_article(self, article_soup):
         """
@@ -161,7 +167,7 @@ class WebScraper:
 
         scraped_items = []
         for item in self.items:
-            new = self.scrape_article_item(article_soup, item)
+            new = self.scrape_article_items(article_soup, item)
             scraped_items.append(new)
 
         return scraped_items
@@ -200,7 +206,7 @@ class WebScraper:
             return num_scraped
 
     def export_to_csv(self, filename): # pragma: no cover
-        self.df.to_csv(filename, index=False)
+        self.df.to_csv(filename, index=False, encoding='utf-8-sig')
 
     def export_to_json(self, filename): # pragma: no cover
         self.df.to_json(filename, force_ascii=False, orient='table', indent=4)
