@@ -1,10 +1,8 @@
-from module.data_formatter import DataFormatter
+import os
 
 import pandas as pd
-
-import os
 import pytest
-
+from module.data_formatter import DataFormatter
 
 test_data_path = os.path.dirname(__file__)
 
@@ -38,10 +36,10 @@ def test_format_date(example_data_formatter: DataFormatter,
 def test_find_word_occurrences(example_data_formatter: DataFormatter,
                                example_input_data, example_expected_data):
 
-    result = example_data_formatter.find_word_occurrences(example_input_data['content'], 3, 4)
+    result = example_data_formatter.find_word_occurrences(example_input_data['content'])
     assert result == example_expected_data['word_occurences']
     
-    result = example_data_formatter.find_word_occurrences(None, 3, 4)
+    result = example_data_formatter.find_word_occurrences(None)
     assert result is None
 
 def test_reduce_content(example_data_formatter: DataFormatter, 
@@ -65,4 +63,23 @@ def test_format_comment_authors(example_data_formatter: DataFormatter,
     result = example_data_formatter.format_comment_authors(None)
     assert result is None
 
+def test_restructure_comments(example_data_formatter: DataFormatter, 
+                              example_input_data, example_expected_data):
     
+    result = example_data_formatter.restructure_comments(example_input_data['authors'], example_input_data['comments'])
+    assert result == example_expected_data['comments']
+
+    result = example_data_formatter.restructure_comments(None, None)
+    assert result is None
+
+@pytest.mark.parametrize('column', ['title', 'date_of_publishing', 'content', 'most_used_words', 'comments'])
+def test_format(example_data_formatter: DataFormatter, example_data_frame, column):
+    example_data_formatter.import_file(test_data_path + '/example.json')
+    
+    example_data_formatter.format()
+
+    print(example_data_frame.at[0, 'comments'])
+    print(example_data_frame.at[1, 'comments'])
+    print(example_data_formatter.df.at[0, 'comments'])
+    print(example_data_formatter.df.at[1, 'comments'])
+    assert example_data_formatter.df[column].equals(example_data_frame[column])
