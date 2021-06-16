@@ -53,7 +53,7 @@ class DataFormatter:
         return new_str
 
     @staticmethod
-    def find_word_occurrences(content, num_words, min_len):
+    def find_word_occurrences(content):
         """
         """
         if not content:
@@ -67,14 +67,33 @@ class DataFormatter:
             occurences[word] += 1
 
         occurences = sorted(occurences.items(), key=lambda x: - x[1])
-        valid_occur = [oc for oc in occurences if len(oc[0]) >= min_len][:num_words]
+        valid_occur = [oc for oc in occurences if len(oc[0]) >= 4][:3]
 
-        return { word: occur for word, occur in valid_occur }
+        return { word: str(occur) for word, occur in valid_occur }
 
-    def restructure_comments(self):
+    def restructure_comments(self, authors, comments):
         """
         """
-        pass
+        if not authors or not comments:
+            return None
+
+        return { auth: comm for auth, comm in zip(self.format_comment_authors(authors), comments) }
+    
+
+    def _restructure_comments(self, row : pd.Series):
+        """
+        """
+
+        if not row['comment-author'] or not row['comment-text']:
+            return row
+
+        row['comment-author'] = self.format_comment_authors(row['comment-author'])
+        
+        if not isinstance(row['comment-text'], list):
+             row['comment-text'] = [ row['comment-text'] ]
+        
+        row['comment-author'] = { auth : comm for auth, comm in zip(row['comment-author'], row['comment-text'])}
+        return row
 
     @staticmethod
     def format_comment_authors(authors):
@@ -86,22 +105,28 @@ class DataFormatter:
         if not isinstance(authors, list):
             authors = [authors]
 
-        authors = [auth.split('\n')[1] for auth in authors]
-
+        authors = [auth.split('\n')[1] + f"_{i+1}" for i, auth in enumerate(authors)]
+        
         return authors
 
     def format(self):
         """
         """
-        pass
+        self.df['date'] = self.df['date'].apply(self.format_date)
+        
+        self.df.insert(3, 'most_used_words', self.df['content'])
+        self.df['most_used_words'] = self.df['most_used_words'].apply(self.find_word_occurrences)
 
-    def export_to_json(self):
+        self.df['content'] = self.df['content'].apply(self.reduce_content)
+        
+        self.df.apply(self._restructure_comments, axis=1)
+        self.df.drop('comment-text', axis=1, inplace=True)
+
+        self.df.rename(columns={'headline' : 'title',
+                                'date' : 'date_of_publishing',
+                                'comment-author' : 'comments'}, inplace=True)
+
+    def export_to_json(self, file_name): # pragma: no cover
         """
         """
-        pass
-
-
-
-# formatter = DataFormatter()
-# formatter.import_file('output/travelsmart.json')
-# print(formatter.df['date'])
+        self.df.to_json(file_name, orient='records', indent=4, force_ascii=False)

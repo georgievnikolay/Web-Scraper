@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from module.web_scraper import WebScraper, Item # pragma: no cover
+from module.data_formatter import DataFormatter
 from module.default_blogs import predefined_blogs
 import argparse
 import os
@@ -16,6 +17,7 @@ def parse_args():  # pragma: no cover
     parser.add_argument('-j', '--json', action='store_true', help='export to JSON')
     parser.add_argument('-n', '--number', type=int, default=20, metavar='', 
                         help='specify the number of articles to scrape')
+    parser.add_argument('-f', '--format', action='store_true', help='format the exported data')                 
     #parser.add_argument('-i', '--items', action='store_true', help='Menu for item customization')
     
     return parser.parse_args()
@@ -36,6 +38,12 @@ def main(args):
 
         if not args.csv and not args.json:
             print(blog.df)
+        
+        if args.format and not args.csv:
+            formatter = DataFormatter()
+            formatter.import_file(path + '.json')
+            formatter.format()
+            formatter.export_to_json(path + '_formatted.json')
 
     else:
         #TODO: Think of smth smarter
