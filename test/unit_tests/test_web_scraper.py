@@ -1,9 +1,8 @@
-import os
-
 from bs4 import BeautifulSoup
 from requests.exceptions import RequestException
 from module.web_scraper import WebScraper, Item
 
+import pandas as pd
 from unittest.mock import patch
 import pytest
 
@@ -24,10 +23,10 @@ def page_url_mock(_):
     yield "page/4"
 
 
-def test_init(expected_init):
-    scraper = WebScraper("https://example.net",
-                         Item('content', 'div', {'class': 'post-content'}),
-                         Item('site', 'meta', {'property': 'og:site_name'}) )
+def test_add_items(expected_init):
+    scraper = WebScraper("https://example.net")
+    scraper.add_items( Item('content', 'div', {'class': 'post-content'}),
+                       Item('site', 'meta', {'property': 'og:site_name'}) )
 
     i = 0
     for item in scraper.items:
@@ -70,13 +69,13 @@ def test_scrape_article_item(default_scraper: WebScraper, custom_scraper : WebSc
                              example_post_soups, example_post_content):
 
     for i, item in enumerate(default_scraper.items):
-        scraped = default_scraper.scrape_article_item(example_post_soups[0], item)
+        scraped = default_scraper.scrape_article_items(example_post_soups[0], item)
         assert scraped == example_post_content[i]
 
     for i, item in enumerate(custom_scraper.items):
-        scraped = custom_scraper.scrape_article_item(example_post_soups[1], item)
+        scraped = custom_scraper.scrape_article_items(example_post_soups[1], item)
         if item.name == 'date':
-            assert scraped == None
+            assert scraped is None
         else:
             assert scraped == example_post_content[i]
 
@@ -85,9 +84,9 @@ def test_scrape_article(default_scraper, example_post_soups, example_post_conten
     assert default_scraper.scrape_article(
         example_post_soups[0]) == example_post_content
     
-    scraper = WebScraper("https://example.net",
-                         Item('content', 'div', {'class': 'post-content'}),
-                         Item('site', 'meta', {'property': 'og:site_name'}) )
+    scraper = WebScraper("https://example.net")
+    scraper.add_items( Item('content', 'div', {'class': 'post-content'}),
+                       Item('site', 'meta', {'property': 'og:site_name'}) )
     
     example_post_content.append('Example')
     example_post_content[1] = None
@@ -96,37 +95,19 @@ def test_scrape_article(default_scraper, example_post_soups, example_post_conten
         example_post_soups[1]) == example_post_content
 
 
-@pytest.mark.parametrize('file_name', ['tmptest.csv', 'tmptest'])
-def test_init_csv_file(default_scraper, file_name):
-    try:
-        os.remove('tmptest.csv')
-    except:
-        pass
+def test_init_data_frame(default_scraper):
+    default_scraper.init_data_frame()
 
-    default_scraper.init_csv_file(file_name)
-    default_scraper.csv_file.close()
-    
-    with open("tmptest.csv", 'r') as file:
-        actual = file.readline()
-    os.remove('tmptest.csv')
-
-    assert actual == "headline,date,content\n"
+    assert isinstance(default_scraper.df, pd.DataFrame)
 
 
 @patch("module.web_scraper.WebScraper.soupify_webpage", soupify_mock)
 @patch("module.web_scraper.WebScraper.generate_page_url", page_url_mock)
-def test_scrape_to_csv(default_scraper):
-    test_file_name = 'tmptest.csv'
+def test_scrape(default_scraper, example_df):
     max_posts = 5
 
-    try:
-        os.remove(test_file_name)
-    except:
-        pass
+    assert default_scraper.scrape(3) == 3
+    assert default_scraper.scrape(20) == max_posts
+    assert default_scraper.df.equals(example_df)
 
-    assert default_scraper.scrape_to_csv(20, test_file_name) == max_posts
-    with open(test_file_name, 'r') as test_file:
-        with open('test/example.csv', 'r') as example_file:
-            assert example_file.read() == test_file.read()
 
-    os.remove(test_file_name)

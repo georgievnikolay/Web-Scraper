@@ -1,15 +1,15 @@
 import requests
 from requests import RequestException
 from bs4 import BeautifulSoup
-import csv
 
+import pandas as pd
 
 class Item:
     """
     An Item object represents the signature of an HTML tag.
     """
 
-    def __init__(self, name: str, tag: str, attribute={'': ''}):  # pragma: no cover
+    def __init__(self, name: str, tag: str, attribute=None):  # pragma: no cover
         """
         Constructor.
         
@@ -21,15 +21,18 @@ class Item:
         """
         self.name = name
         self.tag = tag
-        self.attribute = attribute
-
+        if attribute is None:
+            self.attribute = {'': ''}
+        else:
+            self.attribute = attribute
+    
     def set(self, item): # pragma: no cover
         self.name = item.name
         self.tag = item.tag
         self.attribute = item.attribute
 
 
-class WebScraper(Item):
+class WebScraper:
     """
     This webscraper has been designed mainly to work on WordPress-based blogs.
     
@@ -45,7 +48,8 @@ class WebScraper(Item):
     pass an appropriate Item with uniquely identifying attributes.
     """
 
-    def __init__(self, url, *items: Item):
+    def __init__(self, url): # pragma: no cover
+        ### OUT OF DATE
         """
         Constructor. Provide Item objects where the WP defaults do not suffice.
         
@@ -59,16 +63,17 @@ class WebScraper(Item):
                         Item('content', 'div', {'class': 'entry-content'}) ]
         
         self.article_item = Item('', 'article', {'':''})
-        self.csv_file = None
+        self.df = None    
 
+    def add_items(self, *items : Item):
         for new_item in items:
             found = False
-            
+
             for default_item in self.items:
                 if new_item.name == default_item.name:
                     default_item.set(new_item)
                     found = True
-            
+
             if not found:
                 self.items.append(new_item)
 
@@ -131,19 +136,22 @@ class WebScraper(Item):
             yield self.soupify_webpage(article_link)
 
     @staticmethod
-    def scrape_article_item(article_soup, item: Item):
-        """
+    def scrape_article_items(article_soup, item: Item): #TODO: Outdated docstring
+        """ 
         Attempt to find an element corresponding to the given item's signature
         within the given BeautifulSoup object. Return a string of its text contents.
         """
-        try:
-            return article_soup.find(item.tag, item.attribute)['content']
+        found_items = article_soup.find_all(item.tag, item.attribute)
         
-        except KeyError: # An item was found, but it has no 'content' attribute
-            return article_soup.find(item.tag, item.attribute).text
-        
-        except TypeError: # No such item was found on the page
+        if not found_items:
             return None
+
+        try:
+            contents = [item['content'] for item in found_items]
+        except KeyError: # An item was found, but it has no 'content' attribute
+            contents = [item.text for item in found_items]
+
+        return contents if len(contents) > 1 else contents[0]
 
     def scrape_article(self, article_soup):
         """
@@ -153,49 +161,46 @@ class WebScraper(Item):
 
         scraped_items = []
         for item in self.items:
-            new = self.scrape_article_item(article_soup, item)
+            new = self.scrape_article_items(article_soup, item)
             scraped_items.append(new)
 
         return scraped_items
 
-    def init_csv_file(self, filename):
+    def init_data_frame(self):
+        #TODO:DOCSTRING OUT OF DATE
         """
         Open the specified file for writing. Write the item names as column names.
         Return the CSV writer object to be used for the scraped data.
         """
         field_names = [item.name for item in self.items]
+        self.df = pd.DataFrame(columns=field_names)
 
-        if not ".csv" in filename:
-            filename += ".csv"
-        
-        self.csv_file = open(filename, 'w', newline='', encoding='utf-8')
-        
-        writer = csv.writer(self.csv_file)
-        writer.writerow(field_names)
-
-        return writer
-
-    def scrape_to_csv(self, num_of_articles, filename): # pragma: no cover
+    def scrape(self, num_of_articles):
         """
         Scrapes the given number of latest articles 
-        and writes them to a csv file in named columns.
+        and writes them to a data frame in named columns.
         """
         num_scraped = 0
 
-        writer = self.init_csv_file(filename)
+        self.init_data_frame()
 
         try:
-            for page_soup in self.generate_webpage_soup():
+            for page_soup in self.generate_webpage_soup(): # pragma: no branch
                 for article_soup in self.generate_article_soup(page_soup):
                     scraped_items = self.scrape_article(article_soup)
-                    writer.writerow(scraped_items)
+                    
+                    self.df.loc[num_scraped] = scraped_items
 
                     num_scraped += 1
                     if num_scraped == num_of_articles:
-                        self.csv_file.close()
                         return num_scraped
 
         except RequestException:
             print(f"Only {num_scraped} articles found.")
-            self.csv_file.close()
             return num_scraped
+
+    def export_to_csv(self, filename): # pragma: no cover
+        self.df.to_csv(filename, index=False, encoding='utf-8-sig')
+
+    def export_to_json(self, filename): # pragma: no cover
+        self.df.to_json(filename, force_ascii=False, orient='table', indent=4)
