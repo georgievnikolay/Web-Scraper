@@ -143,21 +143,15 @@ class WebScraper:
         """
         found_items = article_soup.find_all(item.tag, item.attribute)
         
-        if found_items is None:
+        if not found_items:
             return None
 
         try:
-            # contents = map(lambda item: item['content'], found_items)
             contents = [item['content'] for item in found_items]
         except KeyError: # An item was found, but it has no 'content' attribute
             contents = [item.text for item in found_items]
 
-        if len(contents) == 0:
-            return None
-        elif len(contents) == 1:
-            return contents[0]
-        else:
-            return contents
+        return contents if len(contents) > 1 else contents[0]
 
     def scrape_article(self, article_soup):
         """

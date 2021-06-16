@@ -69,11 +69,11 @@ def test_scrape_article_item(default_scraper: WebScraper, custom_scraper : WebSc
                              example_post_soups, example_post_content):
 
     for i, item in enumerate(default_scraper.items):
-        scraped = default_scraper.scrape_article_item(example_post_soups[0], item)
+        scraped = default_scraper.scrape_article_items(example_post_soups[0], item)
         assert scraped == example_post_content[i]
 
     for i, item in enumerate(custom_scraper.items):
-        scraped = custom_scraper.scrape_article_item(example_post_soups[1], item)
+        scraped = custom_scraper.scrape_article_items(example_post_soups[1], item)
         if item.name == 'date':
             assert scraped is None
         else:
