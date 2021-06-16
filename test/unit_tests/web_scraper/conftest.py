@@ -19,7 +19,6 @@ sys.path.append(
     os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 )
 
-
 @pytest.fixture
 def expected_init():
     names = [ 'headline', 'date', 'content', 'site' ]
@@ -80,5 +79,5 @@ def example_post_content():
 
 @pytest.fixture
 def example_df():
-    df = pd.read_csv('./test/example.csv')
+    df = pd.read_csv('./test/unit_tests/web_scraper/example.csv')
     return df

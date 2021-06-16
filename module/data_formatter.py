@@ -1,48 +1,95 @@
 import pandas as pd
 import os
 
+import string
+from collections import defaultdict
+
 class DataFormatter:
 
-    def __init__(self):
+    def __init__(self): # pragma: no cover
         """
         """
         self.df = None
 
-    def data_frame_from_file(self, file_name): # pragma: no cover
+    def import_file(self, file_name):
         """
         """
-        pass
+        if not os.path.exists(file_name):
+            print(f"{file_name} not found.")
+            raise FileNotFoundError
+        
+        if file_name.endswith('.csv'):
+            self.df = pd.read_csv(file_name)
 
-    def restructure_title(self):
-        """
-        """
-        pass
+        elif file_name.endswith('.json'):
+            self.df = pd.read_json(file_name)
 
-    def format_date(self):
-        """
-        """
-        pass
+        else:
+            raise IOError
     
-    def reduce_content(self):
+    @staticmethod
+    def format_date(date: pd.Timestamp):
         """
         """
-        pass
+        if not date:
+            return None
 
-    def find_word_occurrences(self):
-        """
-        """
-        pass
+        return f"{date.day}/{date.month}/{date.year}"
     
+    @staticmethod
+    def reduce_content(content):
+        """
+        """
+        if not content:
+            return None
+            
+        min_chars_in_line = 80
+        content = content.split('\n')
+        content = [line for line in content if len(line) > min_chars_in_line]
+        content = content[:3]
+        new_str = ""
+        for line in content:
+            new_str += line + '\n'
+        return new_str
+
+    @staticmethod
+    def find_word_occurrences(content, num_words, min_len):
+        """
+        """
+        if not content:
+            return None
+        
+        content = content.lower().translate(content.maketrans('', '', string.punctuation))
+
+        occurences = defaultdict(int)
+
+        for word in content.split():
+            occurences[word] += 1
+
+        occurences = sorted(occurences.items(), key=lambda x: - x[1])
+        valid_occur = [oc for oc in occurences if len(oc[0]) >= min_len][:num_words]
+
+        return { word: occur for word, occur in valid_occur }
+
     def restructure_comments(self):
         """
         """
         pass
 
-    def format_comment_authors(self):
+    @staticmethod
+    def format_comment_authors(authors):
         """
         """
-        pass
-    
+        if not authors:
+            return None
+
+        if not isinstance(authors, list):
+            authors = [authors]
+
+        authors = [auth.split('\n')[1] for auth in authors]
+
+        return authors
+
     def format(self):
         """
         """
@@ -56,5 +103,5 @@ class DataFormatter:
 
 
 # formatter = DataFormatter()
-# formatter.data_frame_from_file('../output/travelsmart.json')
-# print(formatter.df)
+# formatter.import_file('output/travelsmart.json')
+# print(formatter.df['date'])
