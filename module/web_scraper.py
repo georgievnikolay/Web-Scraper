@@ -203,4 +203,4 @@ class WebScraper:
         self.df.to_csv(filename, index=False, encoding='utf-8-sig')
 
     def export_to_json(self, filename): # pragma: no cover
-        self.df.to_json(filename, force_ascii=False, orient='table', indent=4)
+        self.df.to_json(filename, force_ascii=False, orient='records', indent=4)
