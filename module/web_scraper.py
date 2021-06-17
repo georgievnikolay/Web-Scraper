@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 import pandas as pd
 
+
 class Item:
     """
     An Item object represents the signature of an HTML tag.

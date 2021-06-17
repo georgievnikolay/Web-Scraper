@@ -21,10 +21,12 @@ sys.path.append(
 
 test_data_path = os.path.dirname(__file__)
 
+
 @pytest.fixture
 def example_data_formatter():
     data_formatter = DataFormatter()
     return data_formatter
+
 
 @pytest.fixture
 def example_input_data():
@@ -65,6 +67,7 @@ def example_input_data():
     
     return data
 
+
 @pytest.fixture
 def example_expected_data():
     data = {
@@ -96,6 +99,7 @@ def example_expected_data():
     }
 
     return data
+
 
 @pytest.fixture
 def example_data_frame():

@@ -4,9 +4,10 @@ import os
 import string
 from collections import defaultdict
 
+
 class DataFormatter:
 
-    def __init__(self): # pragma: no cover
+    def __init__(self):  # pragma: no cover
         """
         """
         self.df = None
@@ -61,13 +62,13 @@ class DataFormatter:
         
         content = content.lower().translate(content.maketrans('', '', string.punctuation))
 
-        occurences = defaultdict(int)
+        occurrences = defaultdict(int)
 
         for word in content.split():
-            occurences[word] += 1
+            occurrences[word] += 1
 
-        occurences = sorted(occurences.items(), key=lambda x: - x[1])
-        valid_occur = [oc for oc in occurences if len(oc[0]) >= 4][:3]
+        occurrences = sorted(occurrences.items(), key=lambda x: - x[1])
+        valid_occur = [oc for oc in occurrences if len(oc[0]) >= 4][:3]
 
         return { word: str(occur) for word, occur in valid_occur }    
 
@@ -81,7 +82,7 @@ class DataFormatter:
         row['comment-author'] = self.format_comment_authors(row['comment-author'])
         
         if not isinstance(row['comment-text'], list):
-             row['comment-text'] = [ row['comment-text'] ]
+            row['comment-text'] = [ row['comment-text'] ]
         
         row['comment-author'] = { auth : comm for auth, comm in zip(row['comment-author'], row['comment-text'])}
         return row

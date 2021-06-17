@@ -6,6 +6,7 @@ from module.default_blogs import predefined_blogs
 import argparse
 import os
 
+
 def parse_args():
     """Parse the input args."""
     parser = argparse.ArgumentParser(
@@ -19,6 +20,7 @@ def parse_args():
     parser.add_argument('-f', '--format', action='store_true', help='format the exported data')
     
     return parser.parse_args()
+
 
 def call_data_formatter(path):
     formatter = DataFormatter()
