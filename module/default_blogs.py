@@ -1,5 +1,4 @@
 from module.web_scraper import WebScraper, Item
-from module.data_formatter import DataFormatter
 
 
 def travelsmart():
@@ -19,12 +18,12 @@ def bozho():
                     )
     return bozho
 
-
+#comments
 def pateshestvenik():
     pateshestvenik = WebScraper("https://pateshestvenik.com/")
     pateshestvenik.add_items( Item('content', 'div', {'class' : 'content'}), 
-                              Item('comment-author', 'div', {'class' : 'comment-author'}),
-                              Item('comment-text', 'div', {'class': 'comment-text'})
+                              Item('comment-author', 'a', {'class' : 'UFICommentActorName'}),
+                              Item('comment-text', 'span', {'class': '_5mdd'})
                             )
     return pateshestvenik
 
