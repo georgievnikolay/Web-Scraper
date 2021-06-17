@@ -50,13 +50,9 @@ class WebScraper:
     """
 
     def __init__(self, url): # pragma: no cover
-        ### OUT OF DATE
         """
-        Constructor. Provide Item objects where the WP defaults do not suffice.
-        
-        If an Item's name coincides with 'headline', 'date', or 'content',
-        it will replace the default. Otherwise, it will be added to the list
-        of items to scrape.
+        Constructor.
+        Initializes Item objects corresponding to WordPress's defaults.
         """
         self.url = url
         self.items = [  Item('headline', 'h1'),
@@ -67,6 +63,10 @@ class WebScraper:
         self.df = None    
 
     def add_items(self, *items : Item):
+        """
+        Adds new Items to scrape. If an Item's name coincides with
+        'headline', 'date' or 'content', it will replace the default.
+        """
         for new_item in items:
             found = False
 
@@ -95,7 +95,7 @@ class WebScraper:
     @staticmethod
     def soupify_webpage(url):  # pragma: no cover
         """
-        Request the page at url and return a corresponding BeautifulSoup object.
+        Requests the page at url and returns a corresponding BeautifulSoup object.
         If the request fails, a RequestException is raised.
         """
         success_status = 200
@@ -121,7 +121,7 @@ class WebScraper:
 
     def set_article_search_item(self, item): # pragma: no cover
         """
-        Set the signature by which to find article links.
+        Sets the signature by which to find article links.
         The default is any 'article' element.
         """
         self.article_item.set(item)
@@ -137,10 +137,12 @@ class WebScraper:
             yield self.soupify_webpage(article_link)
 
     @staticmethod
-    def scrape_article_items(article_soup, item: Item): #TODO: Outdated docstring
+    def scrape_article_items(article_soup, item: Item):
         """ 
-        Attempt to find an element corresponding to the given item's signature
-        within the given BeautifulSoup object. Return a string of its text contents.
+        Attempts to find elements with the item's signature
+        within the BeautifulSoup of an article.
+        Returns a string if one element is found,
+        and a list of strings if there are multiple.
         """
         found_items = article_soup.find_all(item.tag, item.attribute)
         
@@ -168,10 +170,9 @@ class WebScraper:
         return scraped_items
 
     def init_data_frame(self):
-        #TODO:DOCSTRING OUT OF DATE
         """
-        Open the specified file for writing. Write the item names as column names.
-        Return the CSV writer object to be used for the scraped data.
+        Creates a DataFrame object with columns corresponding
+        the names of the Item objects of the instance.
         """
         field_names = [item.name for item in self.items]
         self.df = pd.DataFrame(columns=field_names)
