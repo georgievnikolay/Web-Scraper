@@ -1,4 +1,5 @@
 from module.web_scraper import WebScraper, Item
+from module.data_formatter import DataFormatter
 
 def travelsmart():
     travel_smart = WebScraper("https://www.travelsmart.bg/")

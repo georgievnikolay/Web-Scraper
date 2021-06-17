@@ -1,26 +1,35 @@
 #!/usr/bin/env python3
 
-from module.web_scraper import WebScraper, Item # pragma: no cover
+from module.web_scraper import WebScraper, Item
 from module.data_formatter import DataFormatter
 from module.default_blogs import predefined_blogs
 import argparse
 import os
 
-def parse_args():  # pragma: no cover
+def parse_args():
     """Parse the input args."""
     parser = argparse.ArgumentParser(
         description="WebScraper"
     )
     parser.add_argument('website', type=str, help='one of these blogs: \n'
                         'travelsmart, bozho, igicheva, pateshestvenik, az_moga')
-    parser.add_argument('-c', '--csv', action='store_true', help='export to CSV')
     parser.add_argument('-j', '--json', action='store_true', help='export to JSON')
-    parser.add_argument('-n', '--number', type=int, default=20, metavar='', 
+    parser.add_argument('-n', '--number', type=int, default=20, metavar='POSTS',
                         help='specify the number of articles to scrape')
-    parser.add_argument('-f', '--format', action='store_true', help='format the exported data')                 
-    #parser.add_argument('-i', '--items', action='store_true', help='Menu for item customization')
+    parser.add_argument('-f', '--format', action='store_true', help='format the exported data')
     
     return parser.parse_args()
+
+def call_data_formatter(path):
+    formatter = DataFormatter()
+    
+    try:
+        formatter.import_file(path + '.json')
+    except FileNotFoundError:
+        print(f"{path}.json not found!")
+
+    formatter.format()
+    formatter.export_to_json(path + '_formatted.json')
 
 
 def main(args):
@@ -29,21 +38,14 @@ def main(args):
         blog.scrape(args.number)
         
         path = os.path.join(os.path.dirname(__file__), f'output/{args.website}')
-
-        if args.csv:
-            blog.export_to_csv(path + '.csv')
-    
+        
         if args.json:
             blog.export_to_json(path + '.json')
-
-        if not args.csv and not args.json:
+        else:
             print(blog.df)
         
-        if args.format and not args.csv:
-            formatter = DataFormatter()
-            formatter.import_file(path + '.json')
-            formatter.format()
-            formatter.export_to_json(path + '_formatted.json')
+        if args.format:
+            call_data_formatter(path)
 
     else:
         #TODO: Think of smth smarter

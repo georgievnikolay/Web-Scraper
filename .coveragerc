@@ -3,11 +3,10 @@
 branch = True
 cover_pylib = False
 include =
-    main.py
     module/*
 omit =
+    main.py
     test/*
-    scrape.py
     module/default_blogs.py
 
 [report]
