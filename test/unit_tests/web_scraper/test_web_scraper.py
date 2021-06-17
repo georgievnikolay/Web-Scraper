@@ -58,7 +58,7 @@ def test_generate_webpage_soup(default_scraper: WebScraper, example_page_soups):
 
 @patch("module.web_scraper.WebScraper.soupify_webpage", soupify_mock)
 def test_generate_article_soup(default_scraper: WebScraper,
-                          example_page_soups, example_post_soups):
+                               example_page_soups, example_post_soups):
 
     for page in example_page_soups:
         for soup in default_scraper.generate_article_soup(page):
@@ -109,5 +109,3 @@ def test_scrape(default_scraper, example_df):
     assert default_scraper.scrape(3) == 3
     assert default_scraper.scrape(20) == max_posts
     assert default_scraper.df.equals(example_df)
-
-

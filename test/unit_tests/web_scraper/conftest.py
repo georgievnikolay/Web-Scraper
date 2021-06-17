@@ -19,6 +19,7 @@ sys.path.append(
     os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 )
 
+
 @pytest.fixture
 def expected_init():
     names = [ 'headline', 'date', 'content', 'site' ]
