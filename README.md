@@ -1,17 +1,25 @@
 # Web Scraper for WordPress-based Blogs
 
-### By Julia, Kiril, Martina, and Nikolay
+#### By _Julia, Kiril, Martina,_ and _Nikolay_
+<br>
 
-#### How to run:
-1. **Tests**: on Linux, run the bash script run_tests.sh.
-You may need to change the python executable name.
-1. **Main**: run the main.py script to scrape the latest 20 articles from the travelsmart blog. <br>
-Uncomment any additional WebScraper objects to scrape other blogs. Output goes into the output/ dir.
+### Usage:
+- Run `main.py` with the name of a supported `website`.
+- To save the scraped data in a json file, run with `-j`.
+- To format a file with scraped data, run with `-f`.
+- To specify the number of articles to scrape, run with `-n NUM`.
+
+#### Supported blogs:
+1. [`travelsmart`](https://www.travelsmart.bg/)
+2. [`bozho`](https://blog.bozho.net/) - incomplete formatting
+3. [`igicheva`](https://igicheva.wordpress.com/) - incomplete formatting
+4. [`pateshestvenik`](https://pateshestvenik.com/) - incomplete formatting
+5. [`az_moga`](https://az-moga.com/) - incomplete formatting
 
 <br>
 
 ## Task
 Web scraper - automatically gather info from selected websites (blogs):
 1. _Develop a scraper using a Test Driven Development process._
-1. Process the data for subsequent usage (storage/access/search).
+1. _Process the data for subsequent usage (storage/access/search)._
 1. Present the data through a simple frontend.
