@@ -69,18 +69,9 @@ class DataFormatter:
         occurences = sorted(occurences.items(), key=lambda x: - x[1])
         valid_occur = [oc for oc in occurences if len(oc[0]) >= 4][:3]
 
-        return { word: str(occur) for word, occur in valid_occur }
+        return { word: str(occur) for word, occur in valid_occur }    
 
-    def restructure_comments(self, authors, comments):
-        """
-        """
-        if not authors or not comments:
-            return None
-
-        return { auth: comm for auth, comm in zip(self.format_comment_authors(authors), comments) }
-    
-
-    def _restructure_comments(self, row : pd.Series):
+    def restructure_comments(self, row: pd.Series):
         """
         """
 
@@ -119,7 +110,7 @@ class DataFormatter:
 
         self.df['content'] = self.df['content'].apply(self.reduce_content)
         
-        self.df.apply(self._restructure_comments, axis=1)
+        self.df.apply(self.restructure_comments, axis=1)
         self.df.drop('comment-text', axis=1, inplace=True)
 
         self.df.rename(columns={'headline' : 'title',

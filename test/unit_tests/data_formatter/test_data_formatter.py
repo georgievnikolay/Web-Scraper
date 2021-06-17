@@ -1,6 +1,7 @@
 import os
 
 import pandas as pd
+from pandas.core.frame import DataFrame
 import pytest
 from module.data_formatter import DataFormatter
 
@@ -63,14 +64,23 @@ def test_format_comment_authors(example_data_formatter: DataFormatter,
     result = example_data_formatter.format_comment_authors(None)
     assert result is None
 
-def test_restructure_comments(example_data_formatter: DataFormatter, 
-                              example_input_data, example_expected_data):
+# def test_restructure_comments(example_data_formatter: DataFormatter, 
+#                               example_input_data, example_expected_data):
     
-    result = example_data_formatter.restructure_comments(example_input_data['authors'], example_input_data['comments'])
-    assert result == example_expected_data['comments']
+#     result = example_data_formatter._restructure_comments(example_input_data['authors'], example_input_data['comments'])
+#     assert result == example_expected_data['comments']
 
-    result = example_data_formatter.restructure_comments(None, None)
-    assert result is None
+#     result = example_data_formatter._restructure_comments(None, None)
+#     assert result is None
+
+def test_restructure_comments(example_data_formatter: DataFormatter, 
+                              example_comment_frame):
+    
+    result = example_data_formatter.restructure_comments(example_comment_frame['input'].iloc[0])
+    assert result.equals(example_comment_frame['expected'].iloc[0])
+
+    result = example_data_formatter.restructure_comments(example_comment_frame['input'].iloc[1])
+    assert result.equals(example_comment_frame['expected'].iloc[1])
 
 @pytest.mark.parametrize('column', ['title', 'date_of_publishing', 'content', 'most_used_words', 'comments'])
 def test_format(example_data_formatter: DataFormatter, example_data_frame, column):
@@ -78,8 +88,4 @@ def test_format(example_data_formatter: DataFormatter, example_data_frame, colum
     
     example_data_formatter.format()
 
-    print(example_data_frame.at[0, 'comments'])
-    print(example_data_frame.at[1, 'comments'])
-    print(example_data_formatter.df.at[0, 'comments'])
-    print(example_data_formatter.df.at[1, 'comments'])
     assert example_data_formatter.df[column].equals(example_data_frame[column])
