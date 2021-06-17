@@ -1,3 +1,4 @@
+from typing import List
 import pandas as pd
 import os
 
@@ -37,15 +38,16 @@ class DataFormatter:
             raise IOError
     
     @staticmethod
-    def format_date(date: pd.Timestamp):
+    def format_date(date):
         """
-        Extracts the date from a Timestamp object.
-        Format: DD/M/YYYY
+        Extracts the date from a Timestamp object or str.
+        Format: DD/MM/YYYY
         """
         if not date:
             return None
-
-        return f"{date.day}/{date.month}/{date.year}"
+        
+        date = str(date)
+        return f"{date[8:10]}/{date[5:7]}/{date[0:4]}"
     
     @staticmethod
     def reduce_content(content):
@@ -56,6 +58,9 @@ class DataFormatter:
         """
         if not content:
             return None
+        
+        if isinstance(content, list):
+            content = content[0]
             
         min_chars_in_line = 80
         content = content.split('\n')
@@ -76,6 +81,9 @@ class DataFormatter:
         if not content:
             return None
         
+        if isinstance(content, list):
+            content = content[0]
+
         content = content.lower().translate(content.maketrans('', '', string.punctuation))
 
         occurrences = defaultdict(int)
@@ -94,12 +102,14 @@ class DataFormatter:
         Leaves the resulting dict in the 'comment-author' column.
         """
 
-        if not row['comment-author'] or not row['comment-text']:
+        if row['comment-author'] is None:
             return row
 
         row['comment-author'] = self.format_comment_authors(row['comment-author'])
         
         if not isinstance(row['comment-text'], list):
+            if pd.isnull(row['comment-author']):
+                return row
             row['comment-text'] = [ row['comment-text'] ]
         
         row['comment-author'] = { auth : comm for auth, comm in zip(row['comment-author'], row['comment-text'])}
@@ -111,10 +121,12 @@ class DataFormatter:
         Extracts only the commenter's name from a more complex string.
         Currently specific to the TravelSmart comment section.
         """
-        if not authors:
+        if authors is None:
             return None
-
+        
         if not isinstance(authors, list):
+            if pd.isnull(authors):
+                return None
             authors = [authors]
 
         authors = [auth.split('\n')[1] + f"_{i+1}" for i, auth in enumerate(authors)]
