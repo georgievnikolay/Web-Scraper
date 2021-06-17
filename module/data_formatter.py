@@ -6,14 +6,22 @@ from collections import defaultdict
 
 
 class DataFormatter:
+    """
+    Currently only supports the TravelSmart blog and json files.
+    Formats a number of articles scraped by a WebScraper object.
+    Usage: import_file() -> format() -> export_to_json()
+    """
 
     def __init__(self):  # pragma: no cover
         """
+        Constructor.
         """
         self.df = None
 
     def import_file(self, file_name):
         """
+        Pass the path to a json or csv file 
+        to be imported as a Pandas DataFrame.
         """
         if not os.path.exists(file_name):
             print(f"{file_name} not found.")
@@ -31,6 +39,8 @@ class DataFormatter:
     @staticmethod
     def format_date(date: pd.Timestamp):
         """
+        Extracts the date from a Timestamp object.
+        Format: DD/M/YYYY
         """
         if not date:
             return None
@@ -40,6 +50,9 @@ class DataFormatter:
     @staticmethod
     def reduce_content(content):
         """
+        Reduces a full article down to the first 3 paragraphs.
+        Lines shorter than 80 characters are not counted as paragraphs.
+        (This consideration is mainly to avoid headings.)
         """
         if not content:
             return None
@@ -56,6 +69,9 @@ class DataFormatter:
     @staticmethod
     def find_word_occurrences(content):
         """
+        Returns a dictionary of the 3 most frequent words that are 
+        at least 4 letters long. Ignores case and punctuation.
+        To be called before content reduction.
         """
         if not content:
             return None
@@ -74,6 +90,8 @@ class DataFormatter:
 
     def restructure_comments(self, row: pd.Series):
         """
+        Combines a single article's comments with their authors.
+        Leaves the resulting dict in the 'comment-author' column.
         """
 
         if not row['comment-author'] or not row['comment-text']:
@@ -90,6 +108,8 @@ class DataFormatter:
     @staticmethod
     def format_comment_authors(authors):
         """
+        Extracts only the commenter's name from a more complex string.
+        Currently specific to the TravelSmart comment section.
         """
         if not authors:
             return None
@@ -103,6 +123,8 @@ class DataFormatter:
 
     def format(self):
         """
+        Applies all formatting functions to the corresponding columns,
+        then renames them as required.
         """
         self.df['date'] = self.df['date'].apply(self.format_date)
         
@@ -120,5 +142,7 @@ class DataFormatter:
 
     def export_to_json(self, file_name): # pragma: no cover
         """
+        Exports the current dataframe to the specified json file.
+        To be called after formatting with format().
         """
         self.df.to_json(file_name, orient='records', indent=4, force_ascii=False)
