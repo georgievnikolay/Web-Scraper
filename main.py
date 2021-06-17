@@ -50,8 +50,8 @@ def main(args):
             call_data_formatter(path)
 
     else:
-        #TODO: Think of smth smarter
-        print("Thats all folks!")
+        print(f"We are unable to scrape {args.website}.")
+        print("Run with -h to see valid arguments.")
     
 
 if __name__ == "__main__": 
