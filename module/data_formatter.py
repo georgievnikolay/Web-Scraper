@@ -128,9 +128,9 @@ class DataFormatter:
             if pd.isnull(authors):
                 return None
             authors = [authors]
-
-        authors = [auth.split('\n')[1] + f"_{i+1}" for i, auth in enumerate(authors)]
         
+        authors = [auth.split('\n')[1] + f"_{i+1}" for i, auth in enumerate(authors)]
+
         return authors
 
     def format(self):
