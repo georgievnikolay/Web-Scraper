@@ -200,9 +200,3 @@ class WebScraper:
         except RequestException:
             print(f"Only {num_scraped} articles found.")
             return num_scraped
-
-    def export_to_csv(self, filename): # pragma: no cover
-        self.df.to_csv(filename, index=False, encoding='utf-8-sig')
-
-    def export_to_json(self, filename): # pragma: no cover
-        self.df.to_json(filename, force_ascii=False, orient='records', indent=4)

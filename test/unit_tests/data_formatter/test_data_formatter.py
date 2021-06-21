@@ -4,26 +4,9 @@ import pandas as pd
 from pandas.core.frame import DataFrame
 import pytest
 from module.data_formatter import DataFormatter
+import json
 
 test_data_path = os.path.dirname(__file__)
-
-
-@pytest.mark.parametrize("example_file", ["example.csv", "example.json"])
-def test_import_file_positive(example_data_formatter: DataFormatter, example_file):
-    example_data_formatter.import_file(os.path.join(
-                                       test_data_path, example_file))
-
-    assert isinstance(example_data_formatter.df, pd.DataFrame)
-
-
-def test_import_file_negative(example_data_formatter: DataFormatter):
-    with pytest.raises(FileNotFoundError):
-        example_data_formatter.import_file('non-existant-file')
-
-    with pytest.raises(IOError):
-        example_data_formatter.import_file(os.path.join(
-                                           test_data_path, 'example.xls')
-                                           )
 
 
 def test_format_date(example_data_formatter: DataFormatter,
@@ -31,6 +14,8 @@ def test_format_date(example_data_formatter: DataFormatter,
 
     result = example_data_formatter.format_date(example_input_data['date'])
     assert result == example_expected_data['date']
+
+    example_data_formatter.format_date("non-date string")
 
     result = example_data_formatter.format_date(None)
     assert result is None
@@ -56,33 +41,36 @@ def test_reduce_content(example_data_formatter: DataFormatter,
     assert result is None
 
 
-def test_format_comment_authors(example_data_formatter: DataFormatter,
+def test_extract_authors(example_data_formatter: DataFormatter,
                                 example_input_data, example_expected_data):
 
-    result = example_data_formatter.format_comment_authors(example_input_data['authors'])
+    result = example_data_formatter.extract_authors(example_input_data['authors'])
     assert result == example_expected_data['authors']
 
-    result = example_data_formatter.format_comment_authors(example_input_data['authors'][0])
-    assert result == [example_expected_data['authors'][0]]
-
-    result = example_data_formatter.format_comment_authors(None)
+    result = example_data_formatter.extract_authors(None)
     assert result is None
 
 
-def test_restructure_comments(example_data_formatter: DataFormatter,
-                              example_comment_frame):
+def test_group_comments(example_data_formatter: DataFormatter,
+                              example_comments):
 
-    result = example_data_formatter.restructure_comments(example_comment_frame['input'].iloc[0])
-    assert result.equals(example_comment_frame['expected'].iloc[0])
+    result = example_data_formatter.group_comments(*example_comments['input'])
+    assert result == example_comments['expected']
 
-    result = example_data_formatter.restructure_comments(example_comment_frame['input'].iloc[1])
-    assert result.equals(example_comment_frame['expected'].iloc[1])
+    result = example_data_formatter.group_comments(None, None)
+    assert result is None
 
 
 @pytest.mark.parametrize('column', ['title', 'date_of_publishing', 'content', 'most_used_words', 'comments'])
-def test_format(example_data_formatter: DataFormatter, example_data_frame, column):
-    example_data_formatter.import_file(test_data_path + '/example.json')
+def test_format(example_data_formatter: DataFormatter, example_formatted_data, column):
+    with open(test_data_path + '/example.json', 'r') as f:
+        example_input = json.load(f)
 
-    example_data_formatter.format()
+    result = example_data_formatter.format(example_input)
 
-    assert example_data_formatter.df[column].equals(example_data_frame[column])
+    i = 0
+    for article in result:
+        assert article[column] == example_formatted_data[i][column]
+        i += 1
+
+    assert i == len(example_formatted_data)
