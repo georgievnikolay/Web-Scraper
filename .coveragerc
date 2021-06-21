@@ -5,9 +5,10 @@ cover_pylib = False
 include =
     module/*
 omit =
+    module/_data_formatter.py
+    module/data_handler.py
     main.py
     test/*
-    module/default_blogs.py
 
 [report]
 # Regexes for lines to exclude from consideration
