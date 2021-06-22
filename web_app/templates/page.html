@@ -1,0 +1,11 @@
+{% for post in posts %}
+    <article>
+        <div>
+            <div>
+            <h2><a href="{{ url_for('single_post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            <small>{{ post.date_of_publishing }}</small>
+            </div>
+            <p>{{ post.content[0][:55] }}...</p>
+        </div>
+    </article>
+{% endfor %}
