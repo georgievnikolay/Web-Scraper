@@ -1,6 +1,5 @@
 import os
 
-import pandas as pd
 from pandas.core.frame import DataFrame
 import pytest
 from module.data_formatter import DataFormatter
@@ -59,6 +58,12 @@ def test_group_comments(example_data_formatter: DataFormatter,
 
     result = example_data_formatter.group_comments(None, None)
     assert result is None
+
+
+def test_unify_dtypes(example_data_formatter: DataFormatter,
+                            unify_dtypes_example):
+    result = example_data_formatter.unify_dtypes(unify_dtypes_example['input'])
+    assert result == unify_dtypes_example['expected']
 
 
 @pytest.mark.parametrize('column', ['title', 'date_of_publishing', 'content', 'most_used_words', 'comments'])

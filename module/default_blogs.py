@@ -37,7 +37,7 @@ class Blog:
         'igicheva': Item('', 'article', {'class': 'type-post'})
     }
 
-    author_extract = {
+    author_extract = { # pragma: no branch
         'bozho': lambda s: s.split(' каза:')[0][2:],
         'az_moga': lambda s: s.split(' каза:')[0][2:],
         'igicheva': lambda s: s.split(' says:')[0][2:]

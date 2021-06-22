@@ -127,3 +127,20 @@ def example_comments():
 def example_formatted_data():
     with open(os.path.join(test_data_path, 'example_out.json'), 'r') as f:
         return json.load(f)
+
+@pytest.fixture
+def unify_dtypes_example():
+    in_data = {
+        'content' : [ "Section 1", "Section 2"],
+        'comment-author' : "Koko",
+        'comment-text' : "Hello World"
+    }
+
+    exp_data = {
+        'content' : "Section 1\nSection 2",
+        'comment-author' : [ "Koko" ],
+        'comment-text' : [ "Hello World" ]
+    }
+
+    return {'input': in_data, 
+            'expected': exp_data}

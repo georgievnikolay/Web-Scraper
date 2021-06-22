@@ -1,4 +1,3 @@
-import json
 import re
 from datetime import datetime
 from collections import Counter
@@ -57,7 +56,7 @@ class DataFormatter:
     @staticmethod
     def unify_dtypes(article):
         if isinstance(article['content'], list):
-            article['content'] = ''.join(article['content'])
+            article['content'] = '\n'.join(article['content'])
         
         if not isinstance(article['comment-author'], list) \
                 and article['comment-author'] is not None:
