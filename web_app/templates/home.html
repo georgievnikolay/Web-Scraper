@@ -1,4 +1,14 @@
-{% for blog in blogs %}
-    <a href="{{ url_for('page', page_num=1, blog=blog) }}">{{ blog }}</a>
-    <br>
-{% endfor %}
+{% extends "base.html" %}
+{% block content %}
+
+    {% if blogs %}
+        {% for blog in blogs %}
+        <h2>
+            <a href="{{ url_for('page', page_num=1, blog=blog) }}">{{ blog }}</a>
+        </h2>
+        {% endfor %}
+    {% else %}
+        <h2>No content has been scraped.</h2>
+    {% endif %}
+
+{% endblock content %}

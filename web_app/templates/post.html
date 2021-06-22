@@ -1,25 +1,29 @@
-<article>
-    <div>
+{% extends "base.html" %}
+{% block content %}
+
+    <article>
         <div>
-            <h2>{{ post.title }}</h2>
-            <small>{{ post.date_of_publishing }}</small>
+            <div>
+                <h2>{{ post.title }}</h2>
+                <small>Published on {{ post.date_of_publishing }}</small>
+            </div>
+            
+            <div>
+                {% for paragraph in post.content %}
+                <p>{{ paragraph }}</p>
+                {% endfor %}
+            </div>
         </div>
-        
-        <div>
-            {% for paragraph in post.content %}
-            <p>{{ paragraph }}</p>
-            {% endfor %}
-        </div>
-    </div>
+    </article>
     <div>
         <hr>
         {% if post.comments %}
-        <h4>Comment Section</h4>
+        <h3>Comment Section</h3>
         <hr>
         
         <div>
             {% for author in post.comments.keys() %}
-            <h5>{{ '_'.join(author.split('_')[0:-1]) }}</h5>
+            <h4>{{ '_'.join(author.split('_')[0:-1]) }}</h4>
             <p>{{ post.comments[author] }}</p>
             {% endfor %}
         </div>
@@ -29,13 +33,14 @@
         
         {% endif %}
     </div>
-</article>
-<div>
-    {% if post.id - 1 > 0 %}
-    <a href="{{ url_for('single_post', post_id=post.id - 1, blog=blog) }}">Previous Post</a>
-    {% endif %}
-    
-    {% if post.id + 1 <= num_posts %}
-    <a href="{{ url_for('single_post', post_id=post.id + 1, blog=blog) }}">Next Post</a>
-    {% endif %}
-</div>
+    <div>
+        {% if post.id - 1 > 0 %}
+        <a href="{{ url_for('single_post', post_id=post.id - 1, blog=blog) }}">Previous Post</a>
+        {% endif %}
+        
+        {% if post.id + 1 <= num_posts %}
+        <a href="{{ url_for('single_post', post_id=post.id + 1, blog=blog) }}">Next Post</a>
+        {% endif %}
+    </div>
+
+{% endblock content %}

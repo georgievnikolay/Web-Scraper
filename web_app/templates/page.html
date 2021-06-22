@@ -1,29 +1,39 @@
-{% for post in posts %}
-<article>
-    <div>
-        <div>
-        <h2><a href="{{ url_for('single_post', post_id=post.id, blog=blog) }}">{{ post.title }}</a></h2>
-        <small>{{ post.date_of_publishing }}</small>
-        </div>
-        <p>{{ post.content[0][:55] }}...</p>
-    </div>
-</article>
-{% endfor %}
+{% extends "base.html" %}
+{% block content %}
 
-<div>
-    {% if curr_page - 1 > 0 %}
-    <a href="{{ url_for('page', page_num=curr_page - 1, blog=blog) }}">Previous</a>
-    {% endif %}
-    
-    {% for i in range(1, num_pages + 1) %}
-        {% if i == curr_page %}
-        <a style="color: black" href="{{ url_for('page', page_num=i, blog=blog) }}">{{ i }}</a>
-        {% else %}
-        <a href="{{ url_for('page', page_num=i, blog=blog) }}">{{ i }}</a>
-        {% endif %}
+    {% for post in posts %}
+    <article>
+        <div>
+            <h2><a href="{{ url_for('single_post', post_id=post.id, blog=blog) }}">{{ post.title }}</a></h2>
+            <small>{{ post.date_of_publishing }}</small>
+            <div class="post-preview">{{ post.content[0] }}</div>
+            <div>
+                <h4>Most used words:</h4>
+                {% for word, occur in post.most_used_words.items() %}
+                <span>{{ word }} - {{ occur }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </article>
+    <hr>
     {% endfor %}
-    
-    {% if curr_page + 1 <= num_pages %}
-    <a href="{{ url_for('page', page_num=curr_page + 1, blog=blog) }}">Next</a>
-    {% endif %}
-</div>
+
+    <div>
+        {% if curr_page - 1 > 0 %}
+        <a href="{{ url_for('page', page_num=curr_page - 1, blog=blog) }}">Previous</a>
+        {% endif %}
+        
+        {% for i in range(1, num_pages + 1) %}
+            {% if i == curr_page %}
+            <a style="color: black" href="{{ url_for('page', page_num=i, blog=blog) }}">{{ i }}</a>
+            {% else %}
+            <a href="{{ url_for('page', page_num=i, blog=blog) }}">{{ i }}</a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if curr_page + 1 <= num_pages %}
+        <a href="{{ url_for('page', page_num=curr_page + 1, blog=blog) }}">Next</a>
+        {% endif %}
+    </div>
+
+{% endblock content %}
