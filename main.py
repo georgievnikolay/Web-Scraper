@@ -30,15 +30,24 @@ def main(args):
     path = os.path.join(os.path.dirname(__file__), f'output/{args.website}')
 
     if args.scrape:
-        scraper = Blog.scraper(args.website)
-        scraper.scrape(args.number)
-        DataHandler.data_frame_to_json(scraper.df, path + '.json')
-    
-    if args.format:
-        formatter = Blog.formatter(args.website)
-        result = formatter.format(DataHandler.json_to_obj(path + '.json'))
-        DataHandler.obj_to_json(result, path + '_formatted.json')
+        try:
+            scraper = Blog.scraper(args.website)
+            scraper.scrape(args.number)
+            DataHandler.data_frame_to_json(scraper.df, path + '.json')
+        except PermissionError:
+            print(f"Access denied. Failed to write {args.website}.json.")
 
+    if args.format:
+        try:
+            formatter = Blog.formatter(args.website)
+            result = formatter.format(DataHandler.json_to_obj(path + '.json'))
+            DataHandler.obj_to_json(result, path + '_formatted.json')
+        except FileNotFoundError:
+            print(f"No data to format. {args.website}.json not found in output/ dir.")
+            exit(2)
+        except PermissionError:
+            print(f"Access denied. Failed to write {args.website}_formatted.json.")
+            exit(3)
 
 if __name__ == "__main__": 
     args = parse_args()
