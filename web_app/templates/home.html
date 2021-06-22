@@ -1,0 +1,4 @@
+{% for blog in blogs %}
+    <a href="{{ url_for('page', page_num=1, blog=blog) }}">{{ blog }}</a>
+    <br>
+{% endfor %}
