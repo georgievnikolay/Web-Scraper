@@ -9,7 +9,7 @@ import os
 def parse_args():
     """Parse the input args."""
     parser = argparse.ArgumentParser(
-        description="WebScraper"
+        description="WebScraper for WordPress-based blogs."
     )
     parser.add_argument('website', type=str, help='one of these blogs: \n'
                         'travelsmart, bozho, igicheva, pateshestvenik, az_moga')
