@@ -1,0 +1,29 @@
+body {
+    font-family: Roboto, Arial, Helvetica, sans-serif;
+    background-color: lightgray;
+}
+
+h1, h2, h3 {
+    font-family: Jost, Arial, Helvetica, sans-serif;
+}
+
+.page-content {
+    margin: auto;
+    padding: 4em;
+    padding-top: 2em;
+    width: 75%;
+    max-width: 50em;
+    background-color: white;
+}
+
+article {
+    margin-top: 2em;
+}
+
+.post-preview {
+    height: 2em;
+    margin-top: 1em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
