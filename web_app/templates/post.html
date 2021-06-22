@@ -1,0 +1,41 @@
+<article>
+    <div>
+        <div>
+            <h2>{{ post.title }}</h2>
+            <small>{{ post.date_of_publishing }}</small>
+        </div>
+        
+        <div>
+            {% for paragraph in post.content %}
+            <p>{{ paragraph }}</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div>
+        <hr>
+        {% if post.comments %}
+        <h4>Comment Section</h4>
+        <hr>
+        
+        <div>
+            {% for author in post.comments.keys() %}
+            <h5>{{ '_'.join(author.split('_')[0:-1]) }}</h5>
+            <p>{{ post.comments[author] }}</p>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <h4>No comments for this article</h4>
+        
+        {% endif %}
+    </div>
+</article>
+<div>
+    {% if post.id - 1 > 0 %}
+    <a href="{{ url_for('single_post', post_id=post.id - 1, blog=blog) }}">Previous Post</a>
+    {% endif %}
+    
+    {% if post.id + 1 <= num_posts %}
+    <a href="{{ url_for('single_post', post_id=post.id + 1, blog=blog) }}">Next Post</a>
+    {% endif %}
+</div>
