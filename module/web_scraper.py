@@ -1,7 +1,7 @@
 import requests
 from requests import RequestException
-from bs4 import BeautifulSoup
 
+from bs4 import BeautifulSoup
 import pandas as pd
 
 
@@ -38,7 +38,7 @@ class WebScraper:
     This webscraper has been designed mainly to work on WordPress-based blogs.
     
     For some websites, it will be enough to initialize it with the main URL,
-    then call the scrape_to_csv() function.
+    then call the scrape() function.
     This should scrape each article's headline, publish date, and text content.
     
     If these items are not configured per WP's defaults, it is necessary
