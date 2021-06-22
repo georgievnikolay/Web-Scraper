@@ -5,16 +5,16 @@
 
 ### Usage:
 - Run `main.py` with the name of a supported `website`.
-- To save the scraped data in a json file, run with `-j`.
-- To format a file with scraped data, run with `-f`.
-- To specify the number of articles to scrape, run with `-n NUM`.
+- To scrape the website, run with `-s`/`--scrape`.
+- To format scraped data, run with `-f`/`--format`.
+- Specify the number of articles to scrape with `-n NUM`.
 
 #### Supported blogs:
 1. [`travelsmart`](https://www.travelsmart.bg/)
-2. [`bozho`](https://blog.bozho.net/) - incomplete formatting
-3. [`igicheva`](https://igicheva.wordpress.com/) - incomplete formatting
-4. [`pateshestvenik`](https://pateshestvenik.com/) - incomplete formatting
-5. [`az_moga`](https://az-moga.com/) - incomplete formatting
+2. [`bozho`](https://blog.bozho.net/)
+3. [`igicheva`](https://igicheva.wordpress.com/)
+4. [`pateshestvenik`](https://pateshestvenik.com/)
+5. [`az_moga`](https://az-moga.com/)
 
 <br>
 
