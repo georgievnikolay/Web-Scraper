@@ -5,7 +5,8 @@
 {% endblock head%}
 
 {% block content %}
-
+    <h1 class="blog-title">{{ blog }}</h1>
+    <hr>
     {% for post in posts %}
     <article>
         <div>
@@ -17,18 +18,18 @@
                     <h4>Most used words:</h4>
                     <div class="most-used-words">
                         {% for word, occur in post.most_used_words.items() %}
-                        <span>{{ word }} - {{ occur }}</span>
+                        <span class="highlight-box">{{ word }} - {{ occur }}</span>
                         {% endfor %}
                     </div>
                 </div>
                 <div>
                     <a href="{{ url_for('single_post', post_id=post.id, blog=blog, _anchor='comment-section') }}">
                         {% if not post.comments %}
-                        <h4>No comments.</h4>
+                        <h4>No comments</h4>
                         {% elif post.comments|length == 1 %}
-                        <h4>{{ post.comments | length}} comment.</h4>
+                        <h4>{{ post.comments | length}} comment</h4>
                         {% else %}
-                        <h4>{{ post.comments | length}} comments.</h4>
+                        <h4>{{ post.comments | length}} comments</h4>
                         {% endif %}
                     </a>
                 </div>

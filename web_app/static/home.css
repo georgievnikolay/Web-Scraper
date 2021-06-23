@@ -1,0 +1,33 @@
+.home-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.about {
+    flex: 0 1 65%;
+    min-width: 25ch;
+}
+
+p > a {
+    color: var(--accent-cool-color);
+}
+
+.about > h3 {
+    margin-bottom: 0.5em;
+}
+
+.team {
+    display: flex;
+    gap: 1em;
+}
+
+.supported-blogs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em 1em;
+}
+
+.blog-list {
+    flex: 0 1 20%;
+}
