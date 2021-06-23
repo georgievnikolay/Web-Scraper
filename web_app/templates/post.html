@@ -15,7 +15,7 @@
             </div>
         </div>
     </article>
-    <div>
+    <div id="comment-section">
         <hr>
         {% if post.comments %}
         <h3>Comment Section</h3>
@@ -33,13 +33,21 @@
         
         {% endif %}
     </div>
-    <div>
+    <div class="nav-links">
         {% if post.id - 1 > 0 %}
-        <a href="{{ url_for('single_post', post_id=post.id - 1, blog=blog) }}">Previous Post</a>
+        <span>
+            <a href="{{ url_for('single_post', post_id=post.id - 1, blog=blog) }}">Previous Post</a>
+        </span>
+        {% else %}
+        <span></span>
         {% endif %}
         
         {% if post.id + 1 <= num_posts %}
-        <a href="{{ url_for('single_post', post_id=post.id + 1, blog=blog) }}">Next Post</a>
+        <span>
+            <a href="{{ url_for('single_post', post_id=post.id + 1, blog=blog) }}">Next Post</a>
+        </span>
+        {% else %}
+        <span></span>
         {% endif %}
     </div>
 

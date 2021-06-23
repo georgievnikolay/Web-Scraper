@@ -1,0 +1,41 @@
+.post-preview {
+    height: 2em;
+    margin-top: 1em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+}
+
+.most-used-words {
+    margin-top: -1em;
+    display: flex;
+    gap: 1em;
+}
+
+.most-used-words > * {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    border-radius: 1em;
+    background-color: var(--accent-warm-bg);
+}
+
+.page-num {
+    flex: 1 1 10%
+}
+
+.curr-page {
+    color: var(--accent-warm-color);
+}
+
+.next-page, .prev-page {
+    flex: 1 1 50%;
+}
+
+.next-page {
+    text-align: right;
+}
