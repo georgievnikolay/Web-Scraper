@@ -1,17 +1,19 @@
 from web_app import app
 from flask import render_template, redirect, url_for
-from web_app.data import blogs
+from web_app.data import BlogData
 
 
 @app.route('/')
 @app.route('/index')
 @app.route('/home')
 def home():
-    return render_template('home.html', blogs=blogs)
+    return render_template('home.html', blogs=BlogData.get_blogs())
 
 
 @app.route('/<blog>/page/<int:page_num>')
 def page(blog, page_num):
+    blogs = BlogData.get_blogs()
+
     if blog not in blogs.keys() or blogs[blog] is None:
         return redirect(url_for('not_found'))
 
@@ -22,6 +24,8 @@ def page(blog, page_num):
 
 @app.route('/<blog>/post/<int:post_id>')
 def single_post(blog, post_id):
+    blogs = BlogData.get_blogs()
+
     if blog not in blogs.keys() or blogs[blog] is None:
         return redirect(url_for('not_found'))
 

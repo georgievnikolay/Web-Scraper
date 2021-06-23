@@ -9,6 +9,8 @@ omit =
     module/data_handler.py
     main.py
     test/*
+    web_app/*
+    web_instance.py
 
 [report]
 # Regexes for lines to exclude from consideration

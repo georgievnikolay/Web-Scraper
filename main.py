@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 from module.default_blogs import Blog
-from module.data_handler import DataHandler
 import argparse
-import os
 
 
 def parse_args():
@@ -27,27 +25,15 @@ def main(args):
         print("Run with -h to see valid arguments.")
         exit(1)
 
-    path = os.path.join(os.path.dirname(__file__), f'output/{args.website}')
-
     if args.scrape:
-        try:
-            scraper = Blog.scraper(args.website)
-            scraper.scrape(args.number)
-            DataHandler.data_frame_to_json(scraper.df, path + '.json')
-        except PermissionError:
-            print(f"Access denied. Failed to write {args.website}.json.")
+        Blog.scrape_to_file(args.website, args.number)
 
     if args.format:
-        try:
-            formatter = Blog.formatter(args.website)
-            result = formatter.format(DataHandler.json_to_obj(path + '.json'))
-            DataHandler.obj_to_json(result, path + '_formatted.json')
-        except FileNotFoundError:
-            print(f"No data to format. {args.website}.json not found in output/ dir.")
-            exit(2)
-        except PermissionError:
-            print(f"Access denied. Failed to write {args.website}_formatted.json.")
-            exit(3)
+        Blog.format_from_file(args.website)
+
+    if not (args.scrape or args.format):
+        Blog.scrape_and_format(args.website, args.number)
+
 
 if __name__ == "__main__": 
     args = parse_args()
