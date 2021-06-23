@@ -1,3 +1,8 @@
+.blog-title {
+    text-align: center;
+    text-transform: uppercase;
+}
+
 .post-preview {
     height: 2em;
     margin-top: 1em;
@@ -8,6 +13,7 @@
 
 .post-meta {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
 }
 
@@ -15,13 +21,6 @@
     margin-top: -1em;
     display: flex;
     gap: 1em;
-}
-
-.most-used-words > * {
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    border-radius: 1em;
-    background-color: var(--accent-warm-bg);
 }
 
 .page-num {

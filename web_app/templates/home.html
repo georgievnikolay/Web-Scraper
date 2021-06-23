@@ -1,14 +1,57 @@
 {% extends "base.html" %}
+
+{% block head%}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}">
+{% endblock head%}
+
 {% block content %}
 
-    {% if blogs %}
+<h1>Web Scraper</h1>
+<h3>by Julia, Kiril, Nikolay and Martina</h3>
+<div class="home-container">
+    <div class="about">
+        <h2>About</h2>
+        <p>This is the front-end representation of the data scraped and formatted by our WordPress blog scraper.</p>
+        <p>The code for the project may be viewed <a href="https://github.com/georgievnikolay/Web-Scraper">here</a>.</p>
+        <p>Newly scraped blogs are automatically loaded while the server is running.</p>
+        <h3 class="tight">Task:</h3>
+        <div class="task">
+            <p class="tight">Automatically gather info from selected websites (blogs):
+            </p>
+            <ol>
+                <li>Develop a scraper using a TDD process.</li>
+                <li>Process the data for subsequent usage.</li>
+                <li>Present the data through a simple frontend.</li>
+            </ol>
+        </div>
+        <h3 class="tight">Blogs We Scrape:</h3>
+        <div class="supported-blogs">
+            <a class="highlight-box" href="https://www.travelsmart.bg/">travelsmart</a>
+            <a class="highlight-box" href="https://blog.bozho.net/">bozho</a>
+            <a class="highlight-box" href="https://igicheva.wordpress.com/">igicheva</a>
+            <a class="highlight-box" href="https://pateshestvenik.com/">pateshestvenik</a>
+            <a class="highlight-box" href="https://az-moga.com/">az_moga</a>
+        </div>
+        <h3 class="tight">Our GitHubs:</h3>
+        <div class="team">
+            <a class="highlight-box" href="https://github.com/JuliaOliver">Julia</a>
+            <a class="highlight-box" href="https://github.com/ivanovkirilg">Kiril</a>
+            <a class="highlight-box" href="https://github.com/georgievnikolay">Nikolay</a>
+            <a class="highlight-box" href="https://github.com/MartinaVincheva">Martina</a>
+        </div>
+    </div>
+    <div class="blog-list">
+        <h2>Blogs</h2>
+        {% if blogs %}
         {% for blog in blogs %}
-        <h2>
+        <h3>
             <a href="{{ url_for('page', page_num=1, blog=blog) }}">{{ blog }}</a>
-        </h2>
+        </h3>
         {% endfor %}
-    {% else %}
-        <h2>No content has been scraped.</h2>
-    {% endif %}
+        {% else %}
+        <h3>No content has been scraped.</h3>
+        {% endif %}
+    </div>
+</div>
 
 {% endblock content %}

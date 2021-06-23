@@ -37,7 +37,7 @@ h4, h5 {
 
 .nav-bar-content {
     margin: auto;
-    width: 100%;
+    width: 80%;
     max-width: 50em;
     display: flex;
     flex-wrap: wrap;
@@ -50,10 +50,15 @@ h4, h5 {
     margin: 0;
 }
 
+.nav-bar-home {
+    font-weight: bold;
+}
+
 .page-content {
     margin: auto;
     margin-top: 0;
     padding: 4em;
+    padding-top: 6em;
     width: 75%;
     max-width: 50em;
     background-color: white;
@@ -79,6 +84,17 @@ a:hover {
 
 a:hover > h4 {
     color: var(--accent-warm-color);
+}
+
+.highlight-box {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    border-radius: 1em;
+    background-color: var(--accent-warm-bg);
+}
+
+.tight {
+    margin-bottom: 0.5em;
 }
 
 .nav-links {
