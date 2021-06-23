@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+
+{% block head%}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='page.css') }}">
+{% endblock head%}
+
 {% block content %}
 
     {% for post in posts %}
@@ -7,32 +12,59 @@
             <h2><a href="{{ url_for('single_post', post_id=post.id, blog=blog) }}">{{ post.title }}</a></h2>
             <small>{{ post.date_of_publishing }}</small>
             <div class="post-preview">{{ post.content[0] }}</div>
-            <div>
-                <h4>Most used words:</h4>
-                {% for word, occur in post.most_used_words.items() %}
-                <span>{{ word }} - {{ occur }}</span>
-                {% endfor %}
+            <div class="post-meta">
+                <div>
+                    <h4>Most used words:</h4>
+                    <div class="most-used-words">
+                        {% for word, occur in post.most_used_words.items() %}
+                        <span>{{ word }} - {{ occur }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                    <a href="{{ url_for('single_post', post_id=post.id, blog=blog, _anchor='comment-section') }}">
+                        {% if not post.comments %}
+                        <h4>No comments.</h4>
+                        {% elif post.comments|length == 1 %}
+                        <h4>{{ post.comments | length}} comment.</h4>
+                        {% else %}
+                        <h4>{{ post.comments | length}} comments.</h4>
+                        {% endif %}
+                    </a>
+                </div>
             </div>
         </div>
     </article>
     <hr>
     {% endfor %}
 
-    <div>
+    <div class="nav-links">
         {% if curr_page - 1 > 0 %}
-        <a href="{{ url_for('page', page_num=curr_page - 1, blog=blog) }}">Previous</a>
+        <span class="prev-page">
+            <a href="{{ url_for('page', page_num=curr_page - 1, blog=blog) }}">Previous</a>
+        </span>
+        {% else %}
+        <span class="prev-page"></span>
         {% endif %}
         
         {% for i in range(1, num_pages + 1) %}
-            {% if i == curr_page %}
-            <a style="color: black" href="{{ url_for('page', page_num=i, blog=blog) }}">{{ i }}</a>
+        {% if i == curr_page %}
+            <span class="curr-page page-num">
+                <a href="{{ url_for('page', page_num=i, blog=blog) }}">{{ i }}</a>
+            </span>
             {% else %}
-            <a href="{{ url_for('page', page_num=i, blog=blog) }}">{{ i }}</a>
+            <span class="page-num">
+                <a class="page-num" href="{{ url_for('page', page_num=i, blog=blog) }}">{{ i }}</a>
+            </span>
             {% endif %}
         {% endfor %}
-        
+            
         {% if curr_page + 1 <= num_pages %}
-        <a href="{{ url_for('page', page_num=curr_page + 1, blog=blog) }}">Next</a>
+        <span class="next-page">
+            <a href="{{ url_for('page', page_num=curr_page + 1, blog=blog) }}">Next</a>
+        </span>
+        {% else %}
+        <span class="next-page"></span>
         {% endif %}
     </div>
 

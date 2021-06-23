@@ -1,10 +1,27 @@
+:root {
+    --primary-font-family: Roboto, Arial, Helvetica, sans-serif;
+    --accent-font-family: Jost, Arial, Helvetica, sans-serif;
+    --bg-color: #dddddd;
+    --accent-warm-bg: #f6c08d;
+    --accent-cool-bg: #69b6c5;
+    --content-color: #0a0f16;
+    --heading-color: #0f4f80;
+    --accent-warm-color: #aa642b;
+    --accent-cool-color: #235b66;
+}
+
 body {
-    font-family: Roboto, Arial, Helvetica, sans-serif;
-    background-color: lightgray;
+    font-family: var(--primary-font-family);
+    background-color: var(--bg-color);
 }
 
 h1, h2, h3 {
-    font-family: Jost, Arial, Helvetica, sans-serif;
+    font-family: var(--accent-font-family);
+    color: var(--heading-color);
+}
+
+h4, h5 {
+    color: var(--accent-cool-color)
 }
 
 .page-content {
@@ -14,16 +31,21 @@ h1, h2, h3 {
     width: 75%;
     max-width: 50em;
     background-color: white;
+    color: var(--content-color)
 }
 
 article {
     margin-top: 2em;
 }
 
-.post-preview {
-    height: 2em;
-    margin-top: 1em;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.nav-links {
+    margin-top: 2em;
+    display: flex;
+    justify-content: space-between;
+    color: var(--accent-cool-color);
 }
