@@ -15,6 +15,16 @@
     {% endif %}
 </head>
 <body>
+    <header class="nav-bar">
+        <div class="nav-bar-content">
+            <h3 class="nav-bar-home"><a href="{{ url_for('home') }}">home</a></h3>
+            {% for blog in blogs %}
+            <h3 class="blog-link">
+                <a href="{{ url_for('page', page_num=1, blog=blog) }}">{{ blog }}</a>
+            </h3>
+            {% endfor %}
+        </div>
+    </header>
     <div class="page-content">
         {% block content %}
         {% endblock content %}

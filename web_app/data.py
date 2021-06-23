@@ -54,3 +54,6 @@ for blog_name in blogs.keys():
         continue
 
     blogs[blog_name] = new_blog
+
+
+blogs = {k: v for k, v in blogs.items() if v is not None}
