@@ -1,8 +1,12 @@
 from module.data_formatter import DataFormatter
 from module.web_scraper import WebScraper, Item
+from module.data_handler import DataHandler
 
+from os import path
 
 class Blog:
+    path = path.join(path.dirname(path.dirname(__file__)), f'output/')
+
     urls = {
         'travelsmart': "https://www.travelsmart.bg/",
         'bozho' : "https://blog.bozho.net/",
@@ -67,3 +71,41 @@ class Blog:
             formatter.set_author_extract_func(cls.author_extract[website])
 
         return formatter
+
+    @classmethod # pragma: no cover
+    def scrape_to_file(cls, website, number):
+        try:
+            scraper = cls.scraper(website)
+            scraper.scrape(number)
+            DataHandler.data_frame_to_json(scraper.df, path.join(cls.path, f'{website}.json'))
+        except PermissionError:
+            print(f"Access denied. Failed to write {website}.json.")
+            exit(3)
+    
+    @classmethod # pragma: no cover
+    def format_from_file(cls, website):
+        try:
+            formatter = Blog.formatter(website)
+            preformat_data = DataHandler.json_to_obj(path.join(cls.path, f'{website}.json'))
+            result = formatter.format(preformat_data)
+            DataHandler.obj_to_json(result, path.join(cls.path, f'{website}_formatted.json'))
+        except FileNotFoundError:
+            print(f"No data to format. {website}.json not found in output/ dir.")
+            exit(2)
+        except PermissionError:
+            print(f"Access denied. Failed to write {website}_formatted.json.")
+            exit(3)
+            
+    @classmethod # pragma: no cover
+    def scrape_and_format(cls, website, number):
+        scraper = cls.scraper(website)
+        scraper.scrape(number)
+        preformat_data = scraper.df.to_dict(orient='records')
+        
+        try:
+            formatter = Blog.formatter(website)
+            result = formatter.format(preformat_data)
+            DataHandler.obj_to_json(result, path.join(cls.path, f'{website}_formatted.json'))
+        except PermissionError:
+            print(f"Access denied. Failed to write {website}_formatted.json.")
+            exit(3)
