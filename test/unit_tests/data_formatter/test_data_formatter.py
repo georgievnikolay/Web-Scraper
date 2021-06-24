@@ -1,6 +1,5 @@
 import os
 
-from pandas.core.frame import DataFrame
 import pytest
 from module.data_formatter import DataFormatter
 import json

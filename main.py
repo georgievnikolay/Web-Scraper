@@ -31,7 +31,7 @@ def main(args):
     if args.format:
         Blog.format_from_file(args.website)
 
-    if not (args.scrape or args.format):
+    if not args.scrape and not args.format:
         Blog.scrape_and_format(args.website, args.number)
 
 

@@ -13,8 +13,6 @@ import json
 
 from module.data_formatter import DataFormatter
 
-import pandas as pd
-
 # allow the contents to be found automatically as if we were in that directory
 sys.path.append(
     os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))

@@ -2,17 +2,18 @@ from module.data_handler import DataHandler
 import math
 
 class BlogData:
+    """
+    Loads the data of each blog and exposes it to the app.
+    """
+    
     blog_names = ('travelsmart','bozho','pateshestvenik','az_moga','igicheva')
     
-    blogs = {
-        'travelsmart' : None,
-        'bozho' : None,
-        'pateshestvenik' : None,
-        'az_moga' : None,
-        'igicheva' : None
-    }
+    blogs = dict()
 
     class SingleBlog:
+        """
+        Each instance holds the data of a single blog.
+        """
         def __init__(self, posts_per_page):
             self.posts_per_page = posts_per_page
             self.data = None
@@ -20,6 +21,11 @@ class BlogData:
             self.num_posts = 0
 
         def load_data(self, file_path):
+            """
+            Loads formatted data from a json file;
+            gives each post an id to be used for routing;
+            updates the number of pages and posts.
+            """
             self.data = DataHandler.json_to_obj(file_path)
             
             for id, post in enumerate(self.data):
@@ -30,6 +36,10 @@ class BlogData:
             self.num_posts = len(self.data)
 
         def get_posts_on_page(self, page_num):
+            """
+            Returns the range of posts that are on the given page,
+            as per the posts_per_page given at initialization.
+            """
             first_post = (page_num - 1) * self.posts_per_page
             try:
                 return self.data[first_post : first_post + self.posts_per_page]
@@ -47,6 +57,10 @@ class BlogData:
 
     @classmethod
     def reload_blogs(cls):
+        """
+        Updates the data of each blog object 
+        from the corresponding file.
+        """
         for blog_name in cls.blog_names:
             new_blog = cls.SingleBlog(5)
             try:
@@ -56,7 +70,7 @@ class BlogData:
 
             cls.blogs[blog_name] = new_blog
     
-        cls.blogs = {k: v for k, v in cls.blogs.items() if v is not None}
+        cls.blogs = {k: v for k, v in cls.blogs.items()}
 
     @classmethod
     def get_blogs(cls):

@@ -5,7 +5,6 @@ cover_pylib = False
 include =
     module/*
 omit =
-    module/_data_formatter.py
     module/data_handler.py
     main.py
     test/*
