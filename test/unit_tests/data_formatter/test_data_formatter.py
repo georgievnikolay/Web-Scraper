@@ -67,7 +67,7 @@ def test_unify_dtypes(example_data_formatter: DataFormatter,
 
 @pytest.mark.parametrize('column', ['title', 'date_of_publishing', 'content', 'most_used_words', 'comments'])
 def test_format(example_data_formatter: DataFormatter, example_formatted_data, column):
-    with open(test_data_path + '/example.json', 'r') as f:
+    with open(test_data_path + '/example.json', 'r', encoding='utf-8-sig') as f:
         example_input = json.load(f)
 
     result = example_data_formatter.format(example_input)

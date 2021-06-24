@@ -11,10 +11,10 @@ class DataHandler:
 
     @staticmethod
     def obj_to_json(obj, file_name):
-        with open(file_name, 'w') as f:
+        with open(file_name, 'w', encoding='utf-8-sig') as f:
             json.dump(obj, f, indent=4, ensure_ascii=False)
 
     @staticmethod
     def json_to_obj(file_name):
-        with open(file_name, 'r') as f:
+        with open(file_name, 'r', encoding='utf-8-sig') as f:
             return json.load(f)

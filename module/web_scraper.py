@@ -104,7 +104,7 @@ class WebScraper:
         if response.status_code != success_status:
             raise RequestException
 
-        return BeautifulSoup(response.text, 'lxml')
+        return BeautifulSoup(response.text, 'html.parser')
 
     def generate_webpage_soup(self):
         """

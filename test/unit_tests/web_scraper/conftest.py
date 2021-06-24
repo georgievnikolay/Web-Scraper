@@ -44,12 +44,12 @@ def custom_scraper():
 
 @pytest.fixture
 def example_page_soups():
-    files = [ open("./test/html/Example.html", 'r'),
-              open("./test/html/page/2", 'r'),
-              open("./test/html/page/3", 'r') ]
+    files = [ open("./test/html/Example.html", 'r', encoding='utf-8-sig'),
+              open("./test/html/page/2", 'r', encoding='utf-8-sig'),
+              open("./test/html/page/3", 'r', encoding='utf-8-sig') ]
     soups = []
     for f in files:
-        soups.append(BeautifulSoup(f, 'lxml'))
+        soups.append(BeautifulSoup(f, 'html.parser'))
         f.close()
 
     return soups
@@ -57,11 +57,11 @@ def example_page_soups():
 
 @pytest.fixture
 def example_post_soups():
-    files = [open("./test/html/ExamplePost.html", 'r'),
-             open("./test/html/ExamplePost2.html", 'r')]
+    files = [open("./test/html/ExamplePost.html", 'r', encoding='utf-8-sig'),
+             open("./test/html/ExamplePost2.html", 'r', encoding='utf-8-sig')]
     soups = []
     for f in files:
-        soups.append(BeautifulSoup(f, 'lxml'))
+        soups.append(BeautifulSoup(f, 'html.parser'))
         f.close()
 
     return soups

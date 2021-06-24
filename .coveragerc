@@ -10,6 +10,7 @@ omit =
     test/*
     web_app/*
     web_instance.py
+    venv/*
 
 [report]
 # Regexes for lines to exclude from consideration

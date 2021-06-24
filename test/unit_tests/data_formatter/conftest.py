@@ -123,7 +123,7 @@ def example_comments():
 
 @pytest.fixture
 def example_formatted_data():
-    with open(os.path.join(test_data_path, 'example_out.json'), 'r') as f:
+    with open(os.path.join(test_data_path, 'example_out.json'), 'r', encoding='utf-8-sig') as f:
         return json.load(f)
 
 @pytest.fixture

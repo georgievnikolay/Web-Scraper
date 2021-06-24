@@ -10,10 +10,10 @@ import pytest
 @staticmethod
 def soupify_mock(url):
     try:
-        file = open("test/html/" + url, "r")
+        file = open("test/html/" + url, "r", encoding='utf-8-sig')
     except:
         raise RequestException
-    return BeautifulSoup(file, 'lxml')
+    return BeautifulSoup(file, 'html.parser')
 
 
 def page_url_mock(_):
