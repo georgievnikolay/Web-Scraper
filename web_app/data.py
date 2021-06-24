@@ -5,7 +5,7 @@ class BlogData:
     """
     Loads the data of each blog and exposes it to the app.
     """
-
+    
     blog_names = ('travelsmart','bozho','pateshestvenik','az_moga','igicheva')
     
     blogs = dict()
@@ -14,7 +14,6 @@ class BlogData:
         """
         Each instance holds the data of a single blog.
         """
-
         def __init__(self, posts_per_page):
             self.posts_per_page = posts_per_page
             self.data = None
