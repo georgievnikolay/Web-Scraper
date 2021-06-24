@@ -5,6 +5,20 @@ from module.data_handler import DataHandler
 from os import path
 
 class Blog:
+    """
+    Helper class that holds the default blog settings 
+    used for the WebScraper and DataFormatter classes.
+    These are stored in class dicts where each key is
+    a blog name.
+    :path: specifies the path to the output directory 
+    where the scraped and formatted json files are stored.
+    :urls: each blog's URL.
+    :scraper_items: the items to scrape from each blog. 
+    :search_items: each blog's single article signature.
+    :author_extract: the functions used to extract the
+    author's name from a more complex string.
+    """
+    
     path = path.join(path.dirname(path.dirname(__file__)), f'output/')
 
     urls = {
@@ -49,6 +63,9 @@ class Blog:
 
     @classmethod
     def not_supported(cls, website):
+        """
+        Returns True if the given blog is not set up.
+        """
         if website in cls.urls.keys():
             return False
         else:
@@ -56,6 +73,10 @@ class Blog:
             
     @classmethod
     def scraper(cls, website):
+        """
+        Creates an instance of a WebScraper for the given website(blog)
+        and applies the appropriate settings.
+        """
         scraper = WebScraper(cls.urls[website])
         scraper.add_items(*cls.scraper_items[website])
         if website in cls.search_items:
@@ -65,6 +86,10 @@ class Blog:
 
     @classmethod
     def formatter(cls, website):
+        """
+        Creates an instance of a DataFormatter for the given website(blog)
+        and applies the appropriate settings.
+        """
         formatter = DataFormatter()
 
         if website in cls.author_extract:
@@ -74,6 +99,10 @@ class Blog:
 
     @classmethod # pragma: no cover
     def scrape_to_file(cls, website, number):
+        """
+        Scrapes the given number of posts from the given website.
+        Writes to a "website.json" file. Exits on failure.        
+        """
         try:
             scraper = cls.scraper(website)
             scraper.scrape(number)
@@ -84,6 +113,10 @@ class Blog:
     
     @classmethod # pragma: no cover
     def format_from_file(cls, website):
+        """
+        Formats the previously scraped "website.json" file.
+        Writes to a "website_formatted.json" file. Exits on failure.
+        """
         try:
             formatter = Blog.formatter(website)
             preformat_data = DataHandler.json_to_obj(path.join(cls.path, f'{website}.json'))
@@ -98,6 +131,10 @@ class Blog:
             
     @classmethod # pragma: no cover
     def scrape_and_format(cls, website, number):
+        """
+        Scrapes and formats the given number of posts from the given website. 
+        Writes to a "website_formatted.json" file. Exits on failure.       
+        """
         scraper = cls.scraper(website)
         scraper.scrape(number)
         preformat_data = scraper.df.to_dict(orient='records')

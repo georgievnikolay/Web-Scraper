@@ -22,7 +22,7 @@ class DataFormatter:
     """
     DataFormatter is used to format data received from the WebScraper class.
     
-    It formats a list if dicts, each representing a blog post.
+    It formats a list of dicts, each representing a blog post.
     - The 'headline' item is renamed to 'title'.
     - The 'date' item is renamed to 'date_of_publishing' and
       reduced from an iso-format string to only a date.
